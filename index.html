@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fans Portal - Account Revalidation for Diane Potter</title>
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 4rem 1rem;
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        header p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .notice {
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .notice i {
+            font-size: 2rem;
+            color: #3498db;
+        }
+        .profile-info {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress {
+            width: 99%;
+            height: 20px;
+            background-color: #3498db;
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+        .membership-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .plan {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .plan:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .plan i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        .plan h3 {
+            margin: 0 0 1rem;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+        .plan p {
+            margin: 0.5rem 0;
+            color: #555;
+        }
+        .plan button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .plan button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        .payment-notice {
+            background-color: #fff3cd;
+            border-left: 5px solid #f1c40f;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .payment-notice i {
+            font-size: 2rem;
+            color: #f1c40f;
+        }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #2c3e50;
+            color: white;
+            width: 100%;
+        }
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .plan {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Fans Portal - Account Revalidation</h1>
+        <p>Welcome, Diane Potter!</p>
+        <p>Unlock Exclusive Benefits as a Top Fan!</p>
+    </header>
+
+    <div class="container">
+        <div class="notice">
+            <i class="fas fa-star"></i>
+            <div>
+                <h2>Final Step for Account Revalidation</h2>
+                <p>Dear Diane, your account on our portal could not be successfully re-validated as you are among the top 3 most dedicated fans. You are just <strong>one final step</strong> away from completing your account re-validation by upgrading your profile without delays. This will verify your profile and upgrade your membership access across all our portals and systems, automatically unlocking a <strong>Member of Honour</strong> badge and exclusive benefits.</p>
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <h2>Your Profile Status</h2>
+            <p><i class="fas fa-user"></i> <strong>Name:</strong> Diane Potter</p>
+            <p><i class="fas fa-trophy"></i> <strong>Points:</strong> 6000</p>
+            <p><i class="fas fa-chart-line"></i> <strong>Progress Status:</strong> 99%</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <p>You are one step away from unlocking the prestigious <strong>Member of Honour</strong> badge, which includes a free exclusive invitation to the yearly Fans Event and Red Carpet Gala, plus additional rewards like free tour tickets and the full Hollywood experience at Disneyland!</p>
+        </div>
+
+        <div class="membership-plans">
+            <div class="plan">
+                <i class="fas fa-crown"></i>
+                <h3>Basic Plan</h3>
+                <p>£500 One-Time Payment</p>
+                <p>Unlock Member of Honour Badge</p>
+                <p>Access to Fans Event</p>
+                <button onclick="selectPlan('Basic Plan')">Choose Plan</button>
+            </div>
+            <div class="plan">
+                <i class="fas fa-star"></i>
+                <h3>Premium Plan</h3>
+                <p>£1000 One-Time Payment</p>
+                <p>All Basic Benefits + VIP Access</p>
+                <p>Exclusive Disneyland Tour</p>
+                <button onclick="selectPlan('Premium Plan')">Choose Plan</button>
+            </div>
+            <div class="plan">
+                <i class="fas fa-gem"></i>
+                <h3>Elite Plan</h3>
+                <p>£2000 One-Time Payment</p>
+                <p>All Premium Benefits + Red Carpet Gala</p>
+                <p>Personalized Fan Rewards</p>
+                <button onclick="selectPlan('Elite Plan')">Choose Plan</button>
+            </div>
+        </div>
+
+        <div class="payment-notice">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                <h2>Payment Status</h2>
+                <p>A minimum payment of £500 is required to start upgrading your membership tier or complete payment for your chosen plan to facilitate account re-validation and profile upgrade. This will unlock the <strong>Member of Honour</strong> streak and exclusive benefits. Incomplete profiles and unsuccessful upgrades will be staged for auto-clearance and tagged as void, resulting in a downgrade of your profile and reset of earned points, milestones, achievements, and rankings.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Lions Gate Productions Fans Portal. All rights reserved.</p>
+        <p><a href="https://lions-gate-productions.github.io/fans-portal/#">Visit Our Main Portal</a></p>
+    </footer>
+
+    <script>
+        function selectPlan(planName) {
+            alert(`You have selected the ${planName}. Please proceed to payment to complete your profile upgrade and unlock exclusive benefits!`);
+            // Simulate payment processing (can be extended with actual payment gateway integration)
+            console.log(`Selected Plan: ${planName}`);
+        }
+    </script>
+</body>
+</html>
