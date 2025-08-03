@@ -2,3401 +2,604 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lions Gate Family Bureau - Kimberly Rokeness</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.151.3/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#d4291c',
-                            dark: '#a11f15',
-                            light: '#f04a3e'
-                        },
-                        secondary: {
-                            DEFAULT: '#1c1c1c',
-                            dark: '#0a0a0a',
-                            light: '#2e2e2e'
-                        },
-                        gold: {
-                            DEFAULT: '#ffc107',
-                            dark: '#cc9a06',
-                            light: '#ffcd38'
-                        }
-                    }
-                }
-            }
-        };
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalX News - AI Video Generator</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        /* Enhanced Mobile-first CSS Variables */
         :root {
-            --primary: #d4291c;
-            --primary-dark: #a11f15;
-            --primary-light: #f04a3e;
-            --secondary: #1c1c1c;
-            --gold: #ffc107;
-            --gold-dark: #cc9a06;
-            --gold-light: #ffcd38;
-            --animation-speed: 0.3s;
-            --vh: 1vh;
+            --primary-color: #CC0000;
+            --primary-dark: #A30000;
+            --dark-bg: #1c1c1e;
+            --light-bg: #f0f2f5;
+            --white: #ffffff;
+            --grey: #6c757d;
         }
-        
-        /* Fixed viewport and enhanced scrolling */
-        html {
-            scroll-behavior: smooth;
-            font-size: 14px;
-            -webkit-text-size-adjust: 100%;
-            height: 100%;
-            overflow-x: hidden;
-            touch-action: manipulation;
-        }
-        
+
+        /* Base & Mobile-First Styles */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-bg);
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain;
-        }
-        
-        /* Enhanced base mobile styles */
-        * {
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-        }
-        
-        input, textarea, select, button {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            font-size: 16px !important; /* Prevent zoom on iOS */
-            -webkit-appearance: none;
-            border-radius: 0;
-        }
-        
-        button, .touch-target {
-            touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        
-        .dark {
-            --primary: #f04a3e;
-            --primary-dark: #d4291c;
-            --primary-light: #ff6b60;
-            --secondary: #2e2e2e;
-            --gold: #ffcd38;
-            --gold-dark: #ffc107;
-            --gold-light: #ffe082;
-        }
-        
-        /* Enhanced background container */
-        #scene-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.2;
-            pointer-events: none;
-            display: none;
-        }
-        
-        /* Enhanced glassmorphism */
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            transition: all var(--animation-speed) ease;
-        }
-        
-        .dark .glassmorphism {
-            background: rgba(30, 30, 30, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Enhanced membership card */
-        .membership-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 2px solid #e3e3e3;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-            transition: all var(--animation-speed) ease;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            max-width: 400px;
-            aspect-ratio: 16/10;
-        }
-        
-        .membership-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #d4291c, #ffc107, #d4291c);
-            background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { background-position: 200% 0; }
-            50% { background-position: -200% 0; }
-        }
-        
-        .dark .membership-card {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-            border-color: #404040;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .membership-card:active {
-            transform: scale(0.98);
-        }
-
-        .lions-gate-logo {
-            display: inline-flex;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.25rem;
-        }
-
-        .card-status-active {
-            background: linear-gradient(90deg, #10b981, #059669);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .card-status-pending {
-            background: linear-gradient(90deg, #f59e0b, #d97706);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Enhanced particles for mobile */
-        .floating-particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, var(--gold-light), transparent);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(1deg); }
-        }
-
-        /* Enhanced modal system with better mobile scrolling */
-        .modal {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity var(--animation-speed) ease, visibility var(--animation-speed) ease;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 16px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            transform: scale(0.95) translateY(20px);
-            transition: transform var(--animation-speed) ease, opacity var(--animation-speed) ease;
-            max-height: 90vh;
-            max-height: calc(var(--vh, 1vh) * 90);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            width: 100%;
-            max-width: 400px;
-            margin: auto;
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
-
-        /* Enhanced voice indicator */
-        .voice-indicator {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 9999;
-            background: linear-gradient(135deg, rgba(212, 41, 28, 0.9), rgba(168, 31, 21, 0.9));
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            transform: translateY(60px);
-            opacity: 0;
-            transition: all var(--animation-speed) ease;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(212, 41, 28, 0.3);
-            min-height: 44px;
-            display: flex;
             align-items: center;
-            backdrop-filter: blur(10px);
+            min-height: 100vh;
+            color: #333;
         }
 
-        .voice-indicator.active {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .voice-wave {
-            display: inline-block;
-            width: 2px;
-            height: 8px;
-            background: white;
-            margin: 0 1px;
-            border-radius: 2px;
-            animation: voice-wave 0.8s ease-in-out infinite alternate;
-        }
-
-        .voice-wave:nth-child(2) { animation-delay: 0.1s; }
-        .voice-wave:nth-child(3) { animation-delay: 0.2s; }
-        .voice-wave:nth-child(4) { animation-delay: 0.3s; }
-
-        @keyframes voice-wave {
-            0% { height: 8px; }
-            100% { height: 4px; }
-        }
-
-        /* Enhanced countdown */
-        .countdown-display {
-            background: linear-gradient(135deg, #ff4444, #cc0000);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            font-size: 0.75rem;
-            backdrop-filter: blur(10px);
-        }
-
-        /* Enhanced animations */
-        .chat-message {
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            0% { transform: translateY(20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Enhanced benefit cards */
-        .benefit-card {
-            transition: transform var(--animation-speed) ease;
-            cursor: pointer;
-            min-height: 44px;
-            touch-action: manipulation;
-        }
-
-        .benefit-card:active {
-            transform: scale(0.98);
-        }
-
-        /* Enhanced transitions */
-        .dark-transition {
-            transition: background-color var(--animation-speed) ease, 
-                       color var(--animation-speed) ease, 
-                       border-color var(--animation-speed) ease;
-        }
-
-        /* Enhanced profile photo */
-        .profile-photo {
-            position: relative;
+        .app-container {
+            width: 100%;
+            height: 100vh; /* Full height on mobile */
+            max-width: 420px; /* Max width for phone-like appearance */
+            max-height: 880px;
+            background-color: var(--white);
+            border-radius: 0; /* No radius on mobile edge-to-edge */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--gold));
-            padding: 2px;
-            transition: transform var(--animation-speed) ease;
+            border: 1px solid #ddd;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 15px 25px;
+            text-align: center;
             flex-shrink: 0;
         }
-        
-        .profile-photo:active {
-            transform: scale(0.95);
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
-        
-        .profile-photo img {
-            border-radius: 50%;
-            border: 2px solid white;
-            object-fit: cover;
+        .header .logo-x {
+            font-style: italic;
+            color: #FFD700;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .workflow-step {
+            display: none;
+            flex-direction: column;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .workflow-step.active { display: flex; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.4em;
+            color: var(--dark-bg);
+            margin: 0 0 10px 0;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        p.step-description {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Form & Interactive Elements */
+        textarea {
             width: 100%;
-            height: 100%;
-        }
-
-        /* Enhanced buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: none;
-            color: white;
-            font-weight: 600;
-            transition: all var(--animation-speed) ease;
-            position: relative;
-            overflow: hidden;
-            min-height: 44px;
-            min-width: 44px;
-            touch-action: manipulation;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.95);
-        }
-
-        .btn-active:active {
-            transform: scale(0.95);
-        }
-
-        /* Enhanced download options */
-        .download-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .download-option {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            height: 220px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
             padding: 12px;
-            border-radius: 12px;
+            font-size: 1em;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(204,0,0,0.2);
+            outline: none;
+        }
+
+        .anchor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 20px;
+        }
+        .anchor-avatar {
+            cursor: pointer;
+            position: relative;
+        }
+        .anchor-avatar img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 50%;
+            border: 4px solid transparent;
             transition: all 0.3s ease;
+        }
+        .anchor-avatar.selected img {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(204,0,0,0.5);
+            transform: scale(1.05);
+        }
+        .anchor-avatar .checkmark {
+            display: none;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 25px;
+        }
+        .anchor-avatar.selected .checkmark {
+            display: block;
+        }
+        .anchor-avatar p {
+            text-align: center;
+            margin: 8px 0 0 0;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
-            min-height: 60px;
+            background-color: #fafafa;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .upload-area:hover {
+            background-color: #e9e9e9;
+            border-color: var(--primary-dark);
+        }
+        .upload-area span { display: block; font-weight: bold; font-size: 1.1em; color: #555; }
+        
+        #media-preview {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        .preview-item {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Generation Screen */
+        .generation-screen {
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            height: 100%;
             display: flex;
-            align-items: center;
-            justify-content: center;
             flex-direction: column;
-            gap: 6px;
-            position: relative;
-            touch-action: manipulation;
+            justify-content: center;
+            align-items: center;
         }
-
-        .download-option:not(.disabled):hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .download-option:not(.disabled):active {
-            transform: scale(0.95);
-        }
-
-        .download-option.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: rgba(128, 128, 128, 0.2);
-        }
-
-        .download-option.loading {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        .download-option.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-        }
-
-        .download-option.success {
-            background: rgba(16, 185, 129, 0.3);
-            border-color: rgba(16, 185, 129, 0.5);
-        }
-
-        .download-option.error {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: rgba(239, 68, 68, 0.5);
-        }
-
-        /* Enhanced loading spinner */
+        
         .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top: 5px solid var(--primary-color);
             border-radius: 50%;
-            border-top-color: white;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        #loading-text {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #ccc;
+            min-height: 24px; /* Prevent layout shift */
+        }
+        
+        #final-video-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: background-image 1s ease-in-out;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 30%, transparent 60%);
+        }
+        .video-anchor {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-width: 220px;
+            height: auto;
+        }
+        .video-lower-third {
+            background: rgba(204, 0, 0, 0.9);
+            color: white;
+            padding: 8px 15px;
+            position: absolute;
+            bottom: 35px; /* Above ticker */
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.3;
+        }
+        .video-ticker {
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .ticker-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker-scroll 25s linear infinite;
+        }
+        @keyframes ticker-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-150%); } /* Extended for smoother loop */
         }
 
-        /* Enhanced chat container with better scrolling */
-        .chat-container {
-            max-height: 240px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-        }
 
-        .chat-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .chat-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.5);
-            border-radius: 2px;
-        }
-
-        /* Enhanced main content with better spacing */
-        .main-content {
-            padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
-        }
-
-        /* Enhanced header with safe areas */
-        .app-header {
-            padding-top: max(env(safe-area-inset-top), 0px);
-            padding-left: max(env(safe-area-inset-left), 16px);
-            padding-right: max(env(safe-area-inset-right), 16px);
-        }
-
-        /* Enhanced page containers for better mobile experience */
-        .page-container {
-            min-height: 100vh;
-            min-height: calc(var(--vh, 1vh) * 100);
+        /* Footer Navigation */
+        .footer {
+            padding: 15px 25px;
+            border-top: 1px solid #e0e0e0;
             display: flex;
-            flex-direction: column;
-        }
-
-        /* Enhanced responsive breakpoints - mobile first */
-        @media (max-width: 639px) {
-            .download-options {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
-            
-            .chat-container {
-                max-height: 200px;
-            }
-            
-            .membership-card {
-                max-width: 100%;
-                margin: 0 auto;
-            }
-        }
-
-        @media (min-width: 640px) {
-            html { font-size: 16px; }
-            .floating-particles { display: block; }
-            #scene-container { display: block; }
-            .countdown-display { font-size: 0.875rem; padding: 10px 16px; }
-            .voice-indicator { bottom: 24px; left: 24px; padding: 12px 16px; font-size: 12px; }
-            .download-options { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-            .chat-container { max-height: 280px; }
-        }
-
-        @media (min-width: 768px) {
-            .membership-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-            }
-            
-            .benefit-card:hover {
-                transform: translateY(-4px) scale(1.02);
-            }
-            
-            .profile-photo:hover {
-                transform: scale(1.05);
-            }
-            
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(212, 41, 28, 0.3);
-            }
-
-            .download-option:not(.disabled):hover {
-                background: rgba(255, 255, 255, 0.25);
-            }
-            
-            .chat-container { max-height: 320px; }
-        }
-
-        @media (min-width: 1024px) {
-            .modal-content { max-width: 500px; }
-            .main-content { padding: 0 32px; }
-        }
-
-        /* Enhanced landscape orientation support */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .page-container {
-                min-height: auto;
-            }
-            
-            .modal-content {
-                max-height: 80vh;
-            }
-            
-            .chat-container {
-                max-height: 150px;
-            }
-        }
-
-        /* Accessibility and performance */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Enhanced touch optimization */
-        .touch-target {
-            min-height: 44px;
-            min-width: 44px;
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
+            background-color: #f8f8f8;
+            flex-shrink: 0;
         }
-
-        /* Enhanced iOS optimizations */
-        .scroll-smooth {
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-            overscroll-behavior: contain;
+        .nav-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-
-        /* Enhanced error handling styles */
-        .error-state {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 8px 0;
+        .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-
-        .success-state {
-            background: #dcfce7;
-            color: #16a34a;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 8px 0;
+        .nav-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
-
-        /* Enhanced loading states */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 4px;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .dark .skeleton {
-            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
-            background-size: 200% 100%;
-        }
-
-        /* Fix for iOS Safari viewport */
-        @supports (-webkit-touch-callout: none) {
-            .modal {
-                height: -webkit-fill-available;
-            }
-        }
-
-        /* Enhanced print styles */
-        @media print {
-            .modal, .voice-indicator, .floating-particles, #scene-container {
-                display: none !important;
-            }
-            
-            .membership-card {
-                box-shadow: none;
-                border: 2px solid #000;
-            }
-        }
-
-        /* Enhanced focus styles for accessibility */
-        button:focus-visible,
-        input:focus-visible,
-        select:focus-visible {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        /* Enhanced safe area support */
-        .safe-top {
-            padding-top: env(safe-area-inset-top);
+        .nav-button.back {
+            background-color: var(--grey);
         }
         
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        
-        .safe-left {
-            padding-left: env(safe-area-inset-left);
-        }
-        
-        .safe-right {
-            padding-right: env(safe-area-inset-right);
+        /* Responsive styles for larger screens */
+        @media (min-width: 600px) {
+            body { padding: 40px; }
+            .app-container {
+                border-radius: 40px; /* Rounded corners on desktop */
+                border: 8px solid var(--dark-bg);
+                height: 880px; /* Fixed height on desktop */
+            }
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50 dark:bg-gray-900 dark-transition">
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-primary to-primary-dark z-[9999] flex items-center justify-center page-container">
-        <div class="text-center text-white p-4">
-            <div class="loading-spinner mb-4 mx-auto"></div>
-            <p class="text-sm sm:text-lg font-semibold">Loading Lions Gate Portal...</p>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>Global<span class="logo-x">X</span> News</h1>
         </div>
-    </div>
 
-    <!-- Three.js Background Container -->
-    <div id="scene-container"></div>
-    
-    <!-- Voice Indicator -->
-    <div id="voice-indicator" class="voice-indicator touch-target">
-        <span class="voice-wave"></span>
-        <span class="voice-wave"></span>
-        <span class="voice-wave"></span>
-        <span class="voice-wave"></span>
-        <span id="voice-text" class="ml-2 text-xs">Speaking...</span>
-    </div>
-
-    <!-- Landing Page -->
-    <div id="landing-page" class="fixed inset-0 bg-gradient-to-br from-black via-primary-dark to-black z-50 text-white overflow-hidden page-container">
-        <div class="floating-particles" id="landing-particles"></div>
-        
-        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 text-center safe-top safe-bottom safe-left safe-right">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mb-4">
-                <div class="profile-photo w-full h-full">
-                    <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                </div>
+        <div class="main-content">
+            <div id="step-1" class="workflow-step">
+                <h2>Step 1: Write Your Script</h2>
+                <p class="step-description">Enter the news story. Our AI will analyze it to create your broadcast.</p>
+                <textarea id="news-script" placeholder="e.g., 'Good evening. Today, tech giant OmniCorp unveiled its latest breakthrough in artificial intelligence, promising to revolutionize data processing...'"></textarea>
             </div>
 
-            <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-                Welcome Kimberly Rokeness
-            </h1>
-
-            <div class="glassmorphism rounded-2xl p-4 sm:p-6 max-w-4xl mx-auto mb-6 sm:mb-8">
-                <div class="text-center mb-4">
-                    <div class="text-2xl sm:text-3xl md:text-4xl mb-3">⭐✨🎬</div>
-                    <h2 class="text-base sm:text-lg md:text-xl font-bold mb-3 text-gold">
-                        Exclusive Invitation
-                    </h2>
-                </div>
-                
-                <p class="text-sm sm:text-base md:text-lg leading-relaxed mb-4">
-                    <span class="font-bold text-gold">Kimberly Rokeness</span>, you've been invited to join the prestigious 
-                    <span class="font-bold text-primary-light">Lions Gate Family Bureau!</span>
-                </p>
-                
-                <p class="text-xs sm:text-sm md:text-base leading-relaxed mb-6 opacity-90">
-                    To become a verified member, continue to the portal to accept or decline your invitation and explore 
-                    <span class="font-bold text-gold">endless possibilities</span> with a seamless Lions Gate experience.
-                </p>
-                
-                <div class="flex justify-center space-x-1 mb-3">
-                    <div class="w-2 h-2 bg-gold rounded-full animate-pulse"></div>
-                    <div class="w-2 h-2 bg-gold rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
-                    <div class="w-2 h-2 bg-gold rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
-                </div>
+            <div id="step-2" class="workflow-step">
+                <h2>Step 2: Choose Your AI Anchor</h2>
+                <p class="step-description">Select from our diverse library of hyper-realistic AI avatars.</p>
+                <div class="anchor-grid"></div>
             </div>
 
-            <button id="enter-portal-btn" class="btn-primary btn-active py-3 px-6 sm:px-8 rounded-full text-sm sm:text-base shadow-lg touch-target">
-                <span class="flex items-center justify-center">
-                    <span class="mr-2">✨</span>
-                    Enter Portal
-                    <span class="ml-2">🎬</span>
-                </span>
-            </button>
-        </div>
-    </div>
+            <div id="step-3" class="workflow-step">
+                <h2>Step 3: Upload Media (B-Roll)</h2>
+                <p class="step-description">Add photos. The AI will use these as background visuals in your report.</p>
+                <label for="media-upload-input" class="upload-area"><span>Tap to Select Photos</span></label>
+                <input type="file" id="media-upload-input" multiple accept="image/*" style="display: none;">
+                <div id="media-preview"></div>
+            </div>
 
-    <!-- Invitation Page -->
-    <div id="invitation-page" class="hidden fixed inset-0 bg-gradient-to-br from-black via-purple-900 to-black z-40 text-white overflow-hidden page-container">
-        <div class="floating-particles" id="invitation-particles"></div>
-        
-        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 text-center overflow-y-auto scroll-smooth safe-top safe-bottom safe-left safe-right">
-            <div class="glassmorphism rounded-2xl p-4 sm:p-6 max-w-4xl mx-auto">
-                <div class="text-center mb-6">
-                    <div class="text-3xl sm:text-4xl md:text-5xl mb-4">🏆✨🎭</div>
-                    <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-4 text-gold">
-                        Lions Gate Family Bureau
-                    </h1>
-                    <div class="w-12 sm:w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-4"></div>
-                </div>
-
-                <div class="mb-6">
-                    <p class="text-sm sm:text-base md:text-lg leading-relaxed mb-4">
-                        <span class="font-bold text-gold">Kimberly Rokeness</span>, you've been invited to join the 
-                        <span class="font-bold text-primary-light">Lions Gate Family Bureau</span>, a fans & membership organization by 
-                        <span class="font-bold">Lions Gate Productions</span> and <span class="font-bold">Hollywood Management</span>.
-                    </p>
-                    
-                    <p class="text-xs sm:text-sm md:text-base leading-relaxed mb-6 opacity-90">
-                        Connect with your favorite stars, create unforgettable memories, and become not just a fan, but 
-                        <span class="font-bold text-gold">family</span>.
-                    </p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
-                        <div class="glassmorphism rounded-xl p-3 sm:p-4">
-                            <div class="text-xl sm:text-2xl mb-2">🌟</div>
-                            <h3 class="font-bold mb-1 text-xs sm:text-sm">Exclusive Access</h3>
-                            <p class="text-xs opacity-80">Meet your favorite stars</p>
-                        </div>
-                        <div class="glassmorphism rounded-xl p-3 sm:p-4">
-                            <div class="text-xl sm:text-2xl mb-2">🎬</div>
-                            <h3 class="font-bold mb-1 text-xs sm:text-sm">Behind the Scenes</h3>
-                            <p class="text-xs opacity-80">Set visits & premieres</p>
-                        </div>
-                        <div class="glassmorphism rounded-xl p-3 sm:p-4">
-                            <div class="text-xl sm:text-2xl mb-2">🎭</div>
-                            <h3 class="font-bold mb-1 text-xs sm:text-sm">VIP Events</h3>
-                            <p class="text-xs opacity-80">Red carpet experiences</p>
-                        </div>
+            <div id="step-4" class="workflow-step">
+                <h2>Step 4: Generate Your Broadcast</h2>
+                <p class="step-description">Please wait while our AI engine constructs your video report.</p>
+                <div class="generation-screen">
+                    <div id="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p id="loading-text">Initializing...</p>
                     </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                    <button id="accept-invitation-btn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 text-sm shadow-lg touch-target btn-active">
-                        <span class="flex items-center justify-center">
-                            <span class="mr-2">✅</span>
-                            Accept Invitation
-                            <span class="ml-2">🎉</span>
-                        </span>
-                    </button>
-                    
-                    <button id="decline-invitation-btn" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 text-sm shadow-lg touch-target btn-active">
-                        <span class="flex items-center justify-center">
-                            <span class="mr-2">❌</span>
-                            Decline Invitation
-                            <span class="ml-2">😔</span>
-                        </span>
-                    </button>
+                    <div id="final-video-container">
+                        <div class="video-overlay"></div>
+                        <div class="video-lower-third">
+                            <strong id="anchor-name-display"></strong><br>
+                            <span id="report-title-display"></span>
+                        </div>
+                        <div class="video-ticker">
+                            <span class="ticker-text" id="ticker-text-display"></span>
+                        </div>
+                        <img src="" alt="AI Anchor" class="video-anchor" id="final-anchor-img">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main Dashboard -->
-    <div id="main-dashboard" class="hidden min-h-screen page-container">
-        <!-- Header -->
-        <header class="app-header bg-white/90 dark:bg-secondary/90 backdrop-blur-lg shadow-lg sticky top-0 z-40 dark-transition border-b border-gray-200/20 dark:border-gray-700/20">
-            <div class="container mx-auto px-4 py-3">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <div class="profile-photo w-6 h-6 sm:w-8 sm:h-8 mr-2">
-                            <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <div class="lions-gate-logo text-primary dark:text-primary-light">
-                            <svg class="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2L3.09 8.26L3 8.27V21H21V8.27L21.91 8.26L12 2ZM7 19H5V10.18L12 5.82L19 10.18V19H17V13H15V19H13V11H11V19H9V15H7V19Z"/>
-                            </svg>
-                            <span class="text-sm sm:text-base font-bold">Lions Gate Bureau</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="notifications-btn" class="p-2 rounded-full hover:bg-gray-200/70 dark:hover:bg-gray-700/70 transition-all duration-300 touch-target relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                            <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">6</span>
-                        </button>
-                        <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-gray-200/70 dark:hover:bg-gray-700/70 transition-all duration-300 touch-target">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        </button>
-                        <button id="profile-menu-btn" class="flex items-center space-x-1 focus:outline-none touch-target">
-                            <div class="profile-photo w-6 h-6">
-                                <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                            <span class="hidden sm:block text-xs font-semibold text-gray-700 dark:text-gray-200">Kimberly R.</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content container mx-auto px-4 py-4 flex-1">
-            <!-- Authorization Warning Banner -->
-            <div id="auth-section" class="mb-4">
-                <div id="auth-warning-banner" class="bg-red-50/90 dark:bg-red-900/30 backdrop-blur-sm border-l-4 border-red-500 p-3 rounded-xl dark-transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                        <div class="flex items-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <div>
-                                <h3 class="text-sm sm:text-base font-medium text-red-800 dark:text-red-300">🚨 Account Activation Required</h3>
-                                <p class="text-red-700 dark:text-red-400 text-xs sm:text-sm">
-                                    <span class="font-bold">URGENT:</span> Enter your Authorization Code to activate your account before termination.
-                                </p>
-                            </div>
-                        </div>
-                        <div id="countdown-timer" class="countdown-display flex-shrink-0">
-                            <div class="text-xs">Time Remaining</div>
-                            <div id="countdown-display" class="text-sm font-bold">47:59:59</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Section -->
-            <section class="mb-6">
-                <div class="glassmorphism rounded-2xl p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Profile Info -->
-                    <div class="flex flex-col items-center text-center">
-                        <div class="profile-photo w-20 h-20 sm:w-24 sm:h-24 mb-3">
-                            <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <h2 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-1">Kimberly Rokeness</h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Member ID: <span id="profile-member-id">KR-******</span></p>
-                        <div id="member-status-badge" class="bg-yellow-100/80 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full text-xs font-bold mb-4 backdrop-blur-sm">
-                            NEW MEMBER
-                        </div>
-                        <div class="text-center">
-                            <div class="flex items-center justify-center space-x-2 mb-2">
-                                <span class="text-xs font-medium text-gray-600 dark:text-gray-300">Status:</span>
-                                <span id="auth-status" class="text-red-500 font-bold flex items-center text-xs">
-                                    🔴 Not Activated
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stats -->
-                    <div>
-                        <h3 class="text-sm sm:text-base font-semibold text-gray-800 dark:text-white mb-3">Member Statistics</h3>
-                        <div class="space-y-3">
-                            <div class="bg-white/60 dark:bg-secondary-light/60 backdrop-blur-sm rounded-xl p-3 shadow-sm dark-transition">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Fan Points</span>
-                                    <span id="fan-points-display" class="text-base sm:text-lg font-bold text-primary dark:text-primary-light">100</span>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
-                                    <div id="fan-points-bar" class="bg-primary dark:bg-primary-light h-2 rounded-full transition-all duration-500" style="width: 10%"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Next milestone: 500 points (Requires activation)</p>
-                            </div>
-
-                            <div class="bg-white/60 dark:bg-secondary-light/60 backdrop-blur-sm rounded-xl p-3 shadow-sm dark-transition">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Experience Points (XP)</span>
-                                    <span id="xp-display" class="text-base sm:text-lg font-bold text-green-600 dark:text-green-400">100</span>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
-                                    <div id="xp-bar" class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-500" style="width: 10%"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Level 1 - Newcomer (Activation required for progression)</p>
-                            </div>
-
-                            <div class="bg-white/60 dark:bg-secondary-light/60 backdrop-blur-sm rounded-xl p-3 shadow-sm dark-transition">
-                                <div class="grid grid-cols-2 gap-4 text-center">
-                                    <div>
-                                        <div class="text-base sm:text-lg font-bold text-gray-400">0</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">Events (Locked)</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-base sm:text-lg font-bold text-gray-400">0</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">Badges (Locked)</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Membership ID Card Section -->
-            <section class="mb-6">
-                <h2 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-4">Membership ID Card</h2>
-                <div class="flex flex-col lg:flex-row items-center gap-4">
-                    <div class="flex-1 w-full max-w-md mx-auto lg:mx-0">
-                        <div id="membership-card" class="membership-card p-4 mx-auto">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="lions-gate-logo text-primary dark:text-primary-light">
-                                    <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2L3.09 8.26L3 8.27V21H21V8.27L21.91 8.26L12 2ZM7 19H5V10.18L12 5.82L19 10.18V19H17V13H15V19H13V11H11V19H9V15H7V19Z"/>
-                                    </svg>
-                                    <span class="text-sm font-bold">LIONS GATE</span>
-                                </div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">MEMBER ID</div>
-                            </div>
-                            
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="profile-photo w-12 h-12 sm:w-14 sm:h-14">
-                                    <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-bold text-sm text-gray-800 dark:text-white">Kimberly Rokeness</h3>
-                                    <p id="card-member-id" class="text-xs text-gray-600 dark:text-gray-400 font-mono">KR-******</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-500">Hollywood Elite Member</p>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-3 mb-3 text-xs">
-                                <div>
-                                    <div class="text-gray-500 dark:text-gray-400 mb-1">Status</div>
-                                    <div id="card-status" class="card-status-pending">Pending</div>
-                                </div>
-                                <div>
-                                    <div class="text-gray-500 dark:text-gray-400 mb-1">Valid Until</div>
-                                    <div id="card-expiry-date" class="font-semibold text-gray-800 dark:text-white">Dec 2025</div>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-3 mb-3 text-xs">
-                                <div>
-                                    <div class="text-gray-500 dark:text-gray-400 mb-1">Issue Date</div>
-                                    <div id="card-issue-date" class="font-semibold text-gray-800 dark:text-white">Jun 23, 2025</div>
-                                </div>
-                                <div>
-                                    <div class="text-gray-500 dark:text-gray-400 mb-1">Level</div>
-                                    <div id="card-level" class="font-semibold text-gray-800 dark:text-white">Elite</div>
-                                </div>
-                            </div>
-                            
-                            <div class="border-t border-gray-200/50 dark:border-gray-600/50 pt-3">
-                                <div class="flex justify-between items-center">
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">Lions Gate Family Bureau</div>
-                                    <div class="text-xs font-mono text-gray-600 dark:text-gray-400">|||||| ||| ||||</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-1 text-center lg:text-left">
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-3">Your Digital Membership Card</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
-                            This is your official Lions Gate Family Bureau membership ID card. 
-                            <span id="card-status-text" class="font-bold text-red-500">Activation required for full access and download functionality.</span>
-                        </p>
-                        
-                        <!-- Download Options -->
-                        <div class="download-options">
-                            <div id="download-png-option" class="download-option disabled">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-xs font-medium">PNG Image</span>
-                            </div>
-                            
-                            <div id="download-pdf-option" class="download-option disabled">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="text-xs font-medium">PDF Card</span>
-                            </div>
-                            
-                            <div id="download-details-option" class="download-option disabled">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="text-xs font-medium">Full Details</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Chat Section -->
-            <section class="mb-6">
-                <h2 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-4">Family Bureau Chat</h2>
-                <div class="glassmorphism rounded-2xl p-3">
-                    <div id="chat-container" class="chat-container space-y-3 scroll-smooth">
-                        <!-- Chat messages will be added by JavaScript -->
-                    </div>
-                    <div class="mt-3 flex space-x-2">
-                        <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 px-3 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 dark:bg-gray-700/50 dark:text-white backdrop-blur-sm text-sm">
-                        <button id="send-message-btn" class="btn-primary px-3 py-2 rounded-xl touch-target btn-active">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Membership Benefits Section -->
-            <section class="mb-6">
-                <h2 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-4">Membership Benefits</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="meet-greet">
-                        <div class="text-2xl sm:text-3xl mb-3">🤝</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Meet & Greet</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            Personal meetings with your favorite Lions Gate stars
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="set-visits">
-                        <div class="text-2xl sm:text-3xl mb-3">🎬</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Set Visits</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            Behind-the-scenes access to movie and TV productions
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="premieres">
-                        <div class="text-2xl sm:text-3xl mb-3">🎭</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Movie Premieres</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            VIP access to exclusive movie premiere events
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="live-shows">
-                        <div class="text-2xl sm:text-3xl mb-3">🎤</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Live Shows</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            Front row seats at concerts and live performances
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="exclusive-tours">
-                        <div class="text-2xl sm:text-3xl mb-3">🏛️</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Exclusive Tours</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            Private studio tours and Hollywood experiences
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-
-                    <div class="benefit-card glassmorphism rounded-2xl p-4 text-center opacity-60" data-benefit="red-carpet">
-                        <div class="text-2xl sm:text-3xl mb-3">🏆</div>
-                        <h3 class="text-sm sm:text-base font-bold text-gray-800 dark:text-white mb-2">Red Carpet Events</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3 text-xs">
-                            Walk the red carpet at award shows and galas
-                        </p>
-                        <div class="bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg text-xs mb-2 backdrop-blur-sm">
-                            🔒 Activation Required
-                        </div>
-                        <button class="benefit-btn bg-gray-400 text-white py-2 px-3 rounded-xl text-xs w-full touch-target cursor-not-allowed" disabled>
-                            Locked
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Account Authorization Section -->
-            <section class="mb-6">
-                <div class="bg-yellow-50/80 dark:bg-yellow-900/30 backdrop-blur-sm border-l-4 border-yellow-500 p-3 rounded-xl dark-transition">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm sm:text-base font-medium text-yellow-800 dark:text-yellow-300">Account Authorization Required</h3>
-                            <div class="mt-2 text-yellow-700 dark:text-yellow-400">
-                                <p class="text-xs sm:text-sm">
-                                    To authorize your account, kindly contact support to get your personal Authorization Code to activate your account and unlock full access to all features and benefits.
-                                </p>
-                            </div>
-                            <div class="mt-3 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                                <button id="authorize-account-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-xl text-xs font-medium transition-all duration-300 touch-target btn-active">
-                                    Enter Authorization Code
-                                </button>
-                                <button id="contact-support-btn" class="bg-white/80 hover:bg-white/90 text-yellow-600 border border-yellow-600 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-300 dark:bg-gray-800/80 dark:hover:bg-gray-800/90 dark:text-yellow-400 dark:border-yellow-400 touch-target btn-active">
-                                    Contact Support
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="safe-bottom bg-white/80 dark:bg-secondary/80 backdrop-blur-lg py-4 dark-transition border-t border-gray-200/20 dark:border-gray-700/20">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
-                    <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 text-center md:text-left">&copy; 2024 Lions Gate Family Bureau. All rights reserved.</p>
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-xs text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors">Terms</a>
-                        <a href="#" class="text-xs text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors">Privacy</a>
-                        <a href="#" class="text-xs text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors">Contact</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Authorization Modal -->
-    <div id="auth-modal" class="modal">
-        <div class="modal-content bg-white/95 dark:bg-secondary/95 backdrop-blur-xl rounded-2xl shadow-2xl">
-            <div class="p-4">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Account Authorization</h3>
-                    <button id="close-auth-btn" class="text-gray-400 hover:text-gray-500 focus:outline-none touch-target">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="text-center mb-4">
-                    <div class="text-2xl sm:text-3xl mb-3">🔑✨</div>
-                    <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">
-                        Enter your authorization code to unlock all Lions Gate Family Bureau features and benefits.
-                    </p>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Authorization Code
-                    </label>
-                    <input type="text" id="auth-code-input" placeholder="Enter your authorization code" 
-                           class="w-full px-3 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 dark:bg-gray-700/50 dark:text-white backdrop-blur-sm text-sm">
-                    <div id="auth-error" class="hidden mt-2 text-red-600 text-xs"></div>
-                    <div id="auth-success" class="hidden mt-2 text-green-600 text-xs"></div>
-                </div>
-
-                <div class="flex flex-col space-y-3">
-                    <button id="verify-code-btn" class="w-full btn-primary py-2 px-4 rounded-xl touch-target text-sm btn-active">
-                        Verify Authorization Code
-                    </button>
-                    <button id="proceed-without-auth-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm btn-active">
-                        Continue Without Authorization
-                    </button>
-                    <button id="contact-support-modal-btn" class="w-full bg-gray-200/80 hover:bg-gray-300/80 dark:bg-gray-700/80 dark:hover:bg-gray-600/80 text-gray-800 dark:text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm backdrop-blur-sm btn-active">
-                        Contact Support
-                    </button>
-                </div>
-
-                <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
-                    Need help? Contact: <span class="font-semibold">erwinstoff0766@gmail.com</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Decline Warning Modal -->
-    <div id="decline-modal" class="modal">
-        <div class="modal-content bg-white/95 dark:bg-secondary/95 backdrop-blur-xl rounded-2xl shadow-2xl">
-            <div class="p-4">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-red-600 dark:text-red-400">⚠️ Warning</h3>
-                    <button id="close-decline-btn" class="text-gray-400 hover:text-gray-500 focus:outline-none touch-target">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="text-center mb-4">
-                    <div class="text-3xl sm:text-4xl mb-3">⚠️</div>
-                    <h4 class="text-sm sm:text-base font-bold text-red-600 dark:text-red-400 mb-3">
-                        Serious Consequences
-                    </h4>
-                    <p class="text-gray-700 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                        Declining this invitation will result in <span class="font-bold text-red-600">total cancellation</span>, 
-                        automated IP blockage from reapplying on different devices, and instant disconnection from communications 
-                        with <span class="font-bold">Keanu Reeves</span> and other stars.
-                    </p>
-                </div>
-
-                <div class="flex flex-col space-y-3">
-                    <button id="confirm-decline-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm btn-active">
-                        Confirm Declination
-                    </button>
-                    <button id="cancel-decline-btn" class="w-full bg-gray-200/80 hover:bg-gray-300/80 dark:bg-gray-700/80 dark:hover:bg-gray-600/80 text-gray-800 dark:text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm backdrop-blur-sm btn-active">
-                        Cancel (Go Back)
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notifications-modal" class="modal">
-        <div class="modal-content bg-white/95 dark:bg-secondary/95 backdrop-blur-xl rounded-2xl shadow-2xl">
-            <div class="p-4">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Notifications</h3>
-                    <button id="close-notifications-btn" class="text-gray-400 hover:text-gray-500 focus:outline-none touch-target">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="space-y-3 max-h-80 overflow-y-auto scroll-smooth">
-                    <!-- Notification items -->
-                    <div class="bg-red-50/80 dark:bg-red-900/30 border-l-4 border-red-500 p-3 rounded-r-xl backdrop-blur-sm">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="h-4 w-4 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h4 class="text-xs sm:text-sm font-medium text-red-800 dark:text-red-300">Account Activation Urgent</h4>
-                                <p class="text-xs text-red-700 dark:text-red-400 mt-1">Your account expires in 47 hours. Enter authorization code immediately.</p>
-                                <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50/80 dark:bg-blue-900/30 border-l-4 border-blue-500 p-3 rounded-r-xl backdrop-blur-sm">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="h-4 w-4 text-blue-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h4 class="text-xs sm:text-sm font-medium text-blue-800 dark:text-blue-300">Welcome to Lions Gate!</h4>
-                                <p class="text-xs text-blue-700 dark:text-blue-400 mt-1">Your exclusive invitation has been activated. Welcome to the family!</p>
-                                <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-green-50/80 dark:bg-green-900/30 border-l-4 border-green-500 p-3 rounded-r-xl backdrop-blur-sm">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <svg class="h-4 w-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h4 class="text-xs sm:text-sm font-medium text-green-800 dark:text-green-300">Exclusive Event Invitation</h4>
-                                <p class="text-xs text-green-700 dark:text-green-400 mt-1">You're invited to the John Wick 5 premiere! Activate account to RSVP.</p>
-                                <p class="text-xs text-gray-500 mt-1">3 hours ago</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-600/50">
-                    <button id="mark-all-read-btn" class="w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm btn-active">
-                        Mark All as Read
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Menu Modal -->
-    <div id="profile-modal" class="modal">
-        <div class="modal-content bg-white/95 dark:bg-secondary/95 backdrop-blur-xl rounded-2xl shadow-2xl">
-            <div class="p-4">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">Profile Menu</h3>
-                    <button id="close-profile-btn" class="text-gray-400 hover:text-gray-500 focus:outline-none touch-target">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Profile Header -->
-                <div class="text-center mb-6">
-                    <div class="profile-photo w-16 h-16 mx-auto mb-3">
-                        <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly Rokeness" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <h4 class="text-base font-semibold text-gray-800 dark:text-white">Kimberly Rokeness</h4>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Member ID: <span id="profile-modal-id">KR-******</span></p>
-                    <div id="profile-modal-badge" class="inline-block bg-yellow-100/80 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                        NEW MEMBER
-                    </div>
-                </div>
-
-                <!-- Menu Options -->
-                <div class="space-y-2">
-                    <button id="edit-profile-btn" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-100/70 dark:hover:bg-gray-700/70 transition-all duration-300 text-left touch-target">
-                        <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        <span class="text-gray-700 dark:text-gray-300 text-sm">Edit Profile</span>
-                    </button>
-
-                    <button id="account-settings-btn" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-100/70 dark:hover:bg-gray-700/70 transition-all duration-300 text-left touch-target">
-                        <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span class="text-gray-700 dark:text-gray-300 text-sm">Account Settings</span>
-                    </button>
-
-                    <button id="help-support-btn" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-100/70 dark:hover:bg-gray-700/70 transition-all duration-300 text-left touch-target">
-                        <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="text-gray-700 dark:text-gray-300 text-sm">Help & Support</span>
-                    </button>
-
-                    <button id="membership-details-btn" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-100/70 dark:hover:bg-gray-700/70 transition-all duration-300 text-left touch-target">
-                        <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span class="text-gray-700 dark:text-gray-300 text-sm">Membership Details</span>
-                    </button>
-                </div>
-
-                <div class="mt-6 pt-4 border-t border-gray-200/50 dark:border-gray-600/50">
-                    <button id="logout-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 touch-target text-sm btn-active">
-                        Logout
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Declined Page -->
-    <div id="declined-page" class="hidden fixed inset-0 bg-gradient-to-br from-gray-900 via-red-900 to-black z-50 text-white overflow-hidden page-container">
-        <div class="floating-particles" id="declined-particles"></div>
-        
-        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 text-center safe-top safe-bottom safe-left safe-right">
-            <div class="text-4xl sm:text-6xl mb-6 animate-pulse">💔</div>
-            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold mb-4 animate-pulse">
-                You're no longer a member
-            </h1>
-            <h2 class="text-base sm:text-lg md:text-xl font-bold mb-6 text-gray-300">
-                of the Lions Gate Family Bureau.
-            </h2>
-            
-            <div class="glassmorphism rounded-2xl p-4 max-w-lg mx-auto">
-                <p class="text-sm sm:text-base font-bold text-gold mb-3">
-                    ✨ Shine like a Star with Lions Gate ✨
-                </p>
-                <p class="text-xs sm:text-sm opacity-80">
-                    We're sorry to see you go. The door is always open for you to return to our family.
-                </p>
-            </div>
+        <div class="footer">
+            <button id="back-btn" class="nav-button back" style="display: none;">Back</button>
+            <button id="next-btn" class="nav-button">Next</button>
         </div>
     </div>
 
     <script>
-        // Enhanced utility functions for mobile
-        const utils = {
-            debounce: (func, wait) => {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            },
-            
-            throttle: (func, limit) => {
-                let inThrottle;
-                return function() {
-                    const args = arguments;
-                    const context = this;
-                    if (!inThrottle) {
-                        func.apply(context, args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                }
-            },
-
-            isMobile: () => window.innerWidth <= 768,
-            isTablet: () => window.innerWidth <= 1024 && window.innerWidth > 768,
-            
-            $(id) {
-                try {
-                    return document.getElementById(id);
-                } catch (e) {
-                    console.warn(`Element not found: ${id}`);
-                    return null;
-                }
-            },
-
-            on(element, event, handler, options = { passive: true }) {
-                if (element && typeof handler === 'function') {
-                    try {
-                        element.addEventListener(event, handler, options);
-                    } catch (e) {
-                        console.warn(`Failed to add event listener: ${e.message}`);
-                    }
-                }
-            }
-        };
-
-        // Enhanced viewport height handling for mobile
-        function setVH() {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-
-        setVH();
-        utils.on(window, 'resize', utils.debounce(setVH, 100));
-        utils.on(window, 'orientationchange', () => {
-            setTimeout(setVH, 100);
-        });
-
-        // Dark mode detection
-        function initDarkMode() {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
-            
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                if (event.matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            });
-        }
-
-        // Enhanced Voice Assistant
-        class VoiceAssistant {
-            constructor() {
-                this.synth = window.speechSynthesis;
-                this.voiceIndicator = utils.$('voice-indicator');
-                this.voiceText = utils.$('voice-text');
-                this.isEnabled = true;
-                this.isReady = false;
-                this.hasUserInteracted = false;
-                this.queue = [];
-                
-                this.init();
-            }
-            
-            init() {
-                this.setupUserInteraction();
-                this.initVoices();
-            }
-            
-            setupUserInteraction() {
-                const enableVoice = () => {
-                    this.hasUserInteracted = true;
-                    this.processQueue();
-                };
-                
-                ['click', 'touchstart', 'keydown'].forEach(event => {
-                    utils.on(document, event, enableVoice, { once: true, passive: true });
-                });
-            }
-            
-            initVoices() {
-                const loadVoices = () => {
-                    const voices = this.synth.getVoices();
-                    if (voices.length > 0) {
-                        this.selectVoice(voices);
-                        this.isReady = true;
-                    }
-                };
-                
-                loadVoices();
-                if (this.synth.onvoiceschanged !== undefined) {
-                    this.synth.onvoiceschanged = loadVoices;
-                }
-                setTimeout(loadVoices, 1000);
-            }
-            
-            selectVoice(voices) {
-                this.voice = voices.find(voice => {
-                    const name = voice.name.toLowerCase();
-                    return name.includes('samantha') || 
-                           name.includes('karen') || 
-                           name.includes('female') ||
-                           (voice.lang.includes('en') && voice.gender === 'female');
-                }) || voices.find(voice => voice.lang.includes('en')) || voices[0];
-            }
-            
-            speak(text) {
-                if (!this.isEnabled || !text) return;
-
-                if (!this.hasUserInteracted) {
-                    this.queue.push(text);
-                    return;
-                }
-
-                this.processUtterance(text);
-            }
-
-            processQueue() {
-                if (this.queue.length > 0 && this.hasUserInteracted) {
-                    this.queue.forEach(text => this.processUtterance(text));
-                    this.queue = [];
-                }
-            }
-
-            processUtterance(text) {
-                try {
-                    if (this.synth.speaking) {
-                        this.synth.cancel();
-                    }
-                    
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    if (this.voice) {
-                        utterance.voice = this.voice;
-                    }
-                    utterance.rate = 0.85;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 0.7;
-                    utterance.lang = 'en-US';
-                    
-                    this.showVoiceIndicator(text);
-                    
-                    utterance.onend = () => this.hideVoiceIndicator();
-                    utterance.onerror = () => this.hideVoiceIndicator();
-                    
-                    setTimeout(() => {
-                        if (this.synth) {
-                            this.synth.speak(utterance);
-                        }
-                    }, 100);
-                } catch (e) {
-                    console.warn('Voice synthesis error:', e);
-                }
-            }
-            
-            showVoiceIndicator(text) {
-                if (this.voiceText) {
-                    this.voiceText.textContent = text.substring(0, 25) + (text.length > 25 ? '...' : '');
-                }
-                if (this.voiceIndicator) {
-                    this.voiceIndicator.classList.add('active');
-                }
-            }
-            
-            hideVoiceIndicator() {
-                if (this.voiceIndicator) {
-                    this.voiceIndicator.classList.remove('active');
-                }
-            }
-            
-            toggle() {
-                this.isEnabled = !this.isEnabled;
-                if (!this.isEnabled && this.synth) {
-                    this.synth.cancel();
-                    this.hideVoiceIndicator();
-                }
-            }
-        }
-
-        // Application State
-        let appState = {
-            isAuthorized: false,
-            fanPoints: 100,
-            xp: 100,
-            membershipId: 'KR-******',
-            authCode: 'KR-260319',
-            countdownEndTime: null,
-            isLoading: true,
-            membershipData: {
-                fullName: 'Kimberly Rokeness',
-                email: 'kimberly.rokeness@email.com',
-                phone: '+1 (555) 123-4567',
-                address: '123 Hollywood Blvd, Los Angeles, CA 90028',
-                emergencyContact: 'Sarah Rokeness - +1 (555) 987-6543',
-                membershipType: 'Hollywood Elite Member',
-                joinDate: 'June 23, 2025',
-                expiryDate: 'December 31, 2025',
-                benefits: [
-                    'Exclusive Meet & Greet Events',
-                    'VIP Movie Premieres Access',
-                    'Behind-the-Scenes Set Visits',
-                    'Red Carpet Event Invitations',
-                    'Priority Customer Support',
-                    'Exclusive Merchandise Discounts'
-                ]
-            }
-        };
-
-        // Chat users data
-        const chatUsers = [
-            {
-                name: 'Emily Rodriguez',
-                avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b647?w=100&h=100&fit=crop&crop=face',
-                messages: [
-                    "Welcome to our amazing community! 🌟",
-                    "The events here are absolutely incredible!",
-                    "You're going to love meeting the stars! 😍"
-                ]
-            },
-            {
-                name: 'Michael Chen',
-                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-                messages: [
-                    "Hey Kimberly! So excited you joined us! 🎬",
-                    "The VIP experiences are totally worth it!",
-                    "Kimberly, you should definitely activate your account!"
-                ]
-            }
-        ];
-
-        let autoMessageInterval;
-        let voiceAssistant;
-
-        // Initialize voice assistant
-        function initVoiceAssistant() {
-            try {
-                voiceAssistant = new VoiceAssistant();
-            } catch (e) {
-                console.warn('Voice assistant initialization failed:', e);
-                voiceAssistant = { speak: () => {}, toggle: () => {} };
-            }
-        }
-
-        // Load state
-        function loadState() {
-            appState.countdownEndTime = Date.now() + (48 * 60 * 60 * 1000);
-        }
-
-        // Initialize floating particles with improved mobile detection
-        function initFloatingParticles() {
-            if (utils.isMobile() && window.innerWidth < 768) return;
-            
-            const containers = document.querySelectorAll('.floating-particles');
-            containers.forEach(container => {
-                if (!container) return;
-                
-                container.innerHTML = '';
-                const particleCount = utils.isTablet() ? 4 : 6;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.width = Math.random() * 3 + 2 + 'px';
-                    particle.style.height = particle.style.width;
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.top = Math.random() * 100 + '%';
-                    particle.style.animationDelay = Math.random() * 6 + 's';
-                    particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
-                    container.appendChild(particle);
-                }
-            });
-        }
-
-        // Initialize Three.js background with improved performance
-        function initThreeJS() {
-            if (utils.isMobile() || !window.THREE) return;
-            
-            try {
-                const sceneContainer = utils.$('scene-container');
-                if (!sceneContainer) return;
-                
-                const bgScene = new THREE.Scene();
-                const bgCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                const bgRenderer = new THREE.WebGLRenderer({ 
-                    antialias: false, 
-                    alpha: true,
-                    powerPreference: "high-performance"
-                });
-                
-                bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-                bgRenderer.setSize(window.innerWidth, window.innerHeight);
-                sceneContainer.appendChild(bgRenderer.domElement);
-                
-                const particlesGeometry = new THREE.BufferGeometry();
-                const particlesCount = 100;
-                const positions = new Float32Array(particlesCount * 3);
-                
-                for (let i = 0; i < particlesCount * 3; i += 3) {
-                    const radius = 30 + Math.random() * 50;
-                    const theta = Math.random() * Math.PI * 2;
-                    const phi = Math.random() * Math.PI;
-                    
-                    positions[i] = radius * Math.sin(phi) * Math.cos(theta);
-                    positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                    positions[i + 2] = radius * Math.cos(phi);
-                }
-                
-                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                
-                const particlesMaterial = new THREE.PointsMaterial({
-                    size: 1,
-                    color: 0xffc107,
-                    transparent: true,
-                    opacity: 0.6
-                });
-                
-                const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-                bgScene.add(particles);
-                
-                bgCamera.position.z = 100;
-                
-                let animationId;
-                function animate() {
-                    animationId = requestAnimationFrame(animate);
-                    particles.rotation.y += 0.0003;
-                    particles.rotation.x += 0.0002;
-                    bgRenderer.render(bgScene, bgCamera);
-                }
-                
-                const onWindowResize = utils.debounce(() => {
-                    bgCamera.aspect = window.innerWidth / window.innerHeight;
-                    bgCamera.updateProjectionMatrix();
-                    bgRenderer.setSize(window.innerWidth, window.innerHeight);
-                }, 250);
-                
-                utils.on(window, 'resize', onWindowResize);
-                animate();
-                
-                utils.on(window, 'beforeunload', () => {
-                    if (animationId) {
-                        cancelAnimationFrame(animationId);
-                    }
-                    if (bgRenderer) {
-                        bgRenderer.dispose();
-                    }
-                    if (particlesGeometry) {
-                        particlesGeometry.dispose();
-                    }
-                    if (particlesMaterial) {
-                        particlesMaterial.dispose();
-                    }
-                });
-            } catch (error) {
-                console.warn('Three.js initialization failed:', error);
-            }
-        }
-
-        // Enhanced chat initialization
-        function initChat() {
-            const chatContainer = utils.$('chat-container');
-            if (!chatContainer) return;
-            
-            chatContainer.innerHTML = '';
-            
-            addChatMessage({
-                sender: 'Lions Gate Family Bureau',
-                message: 'Welcome, Kimberly, to our family! 🎉',
-                time: 'Just now',
-                isSystem: true
-            });
-            
-            setTimeout(() => {
-                addChatMessage({
-                    sender: 'Emily Rodriguez',
-                    message: 'Welcome to our amazing community, Kimberly! 🌟',
-                    time: '1 min ago',
-                    avatar: chatUsers[0].avatar
-                });
-            }, 1000);
-            
-            setTimeout(() => {
-                addChatMessage({
-                    sender: 'Michael Chen',
-                    message: 'Hey Kimberly! So excited you joined us! 🎬',
-                    time: '2 min ago',
-                    avatar: chatUsers[1].avatar
-                });
-            }, 2000);
-            
-            startAutoMessages();
-        }
-
-        function addChatMessage(msg, isUserMessage = false) {
-            const chatContainer = utils.$('chat-container');
-            if (!chatContainer) return;
-            
-            const messageEl = document.createElement('div');
-            messageEl.className = 'chat-message flex items-start space-x-2 p-2 rounded-xl ' + 
-                (msg.isSystem ? 'bg-primary/10 border-l-4 border-primary backdrop-blur-sm' : 
-                 isUserMessage ? 'bg-primary/10 ml-6 backdrop-blur-sm' : 'bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm');
-            
-            if (msg.isSystem) {
-                messageEl.innerHTML = `
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xs">LG</div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <span class="font-semibold text-primary text-xs">${msg.sender}</span>
-                            <span class="text-xs text-gray-500">${msg.time}</span>
-                        </div>
-                        <p class="text-gray-700 dark:text-gray-300 text-xs">${msg.message}</p>
-                    </div>
-                `;
-            } else if (isUserMessage) {
-                messageEl.innerHTML = `
-                    <div class="flex-shrink-0">
-                        <img src="https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080" alt="Kimberly" class="w-8 h-8 rounded-full object-cover" loading="lazy">
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <span class="font-semibold text-primary text-xs">Kimberly Rokeness</span>
-                            <span class="text-xs text-gray-500">Just now</span>
-                            <span class="bg-gradient-to-r from-red-400 to-pink-400 text-white px-2 py-1 rounded-full text-xs">❤️ +1</span>
-                        </div>
-                        <p class="text-gray-700 dark:text-gray-300 text-xs">${msg.message}</p>
-                    </div>
-                `;
-            } else {
-                messageEl.innerHTML = `
-                    <div class="flex-shrink-0">
-                        <img src="${msg.avatar}" alt="${msg.sender}" class="w-8 h-8 rounded-full object-cover" loading="lazy">
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <span class="font-semibold text-gray-800 dark:text-white text-xs">${msg.sender}</span>
-                            <span class="text-xs text-gray-500">${msg.time}</span>
-                        </div>
-                        <p class="text-gray-700 dark:text-gray-300 text-xs">${msg.message}</p>
-                    </div>
-                `;
-            }
-            
-            chatContainer.appendChild(messageEl);
-            
-            requestAnimationFrame(() => {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            });
-        }
-
-        function startAutoMessages() {
-            clearInterval(autoMessageInterval);
-            autoMessageInterval = setInterval(() => {
-                try {
-                    const randomUser = chatUsers[Math.floor(Math.random() * chatUsers.length)];
-                    const randomMessage = randomUser.messages[Math.floor(Math.random() * randomUser.messages.length)];
-                    
-                    addChatMessage({
-                        sender: randomUser.name,
-                        message: randomMessage,
-                        time: Math.floor(Math.random() * 10) + 1 + ' min ago',
-                        avatar: randomUser.avatar
-                    });
-                } catch (e) {
-                    console.warn('Auto message error:', e);
-                }
-            }, 20000);
-        }
-
-        // Update countdown timer
-        function updateCountdown() {
-            const countdownElement = utils.$('countdown-display');
-            if (!countdownElement) return;
-            
-            const now = Date.now();
-            const timeLeft = appState.countdownEndTime - now;
-            
-            if (timeLeft <= 0) {
-                countdownElement.textContent = '00:00:00';
-                return;
-            }
-            
-            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            
-            countdownElement.textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        // Update profile modal
-        function updateProfileModal() {
-            const profileModalId = utils.$('profile-modal-id');
-            const profileModalBadge = utils.$('profile-modal-badge');
-            
-            if (profileModalId) {
-                profileModalId.textContent = appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX';
-            }
-            
-            if (profileModalBadge) {
-                if (appState.isAuthorized) {
-                    profileModalBadge.textContent = 'VERIFIED MEMBER';
-                    profileModalBadge.className = 'inline-block bg-green-100/80 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-xs font-bold mt-2';
-                } else {
-                    profileModalBadge.textContent = 'NEW MEMBER';
-                    profileModalBadge.className = 'inline-block bg-yellow-100/80 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full text-xs font-bold mt-2';
-                }
-            }
-        }
-
-        // Enhanced UI update for authorization with improved animations
-        function updateUIForAuthorization() {
-            const elements = {
-                authWarningBanner: utils.$('auth-warning-banner'),
-                authStatus: utils.$('auth-status'),
-                profileMemberId: utils.$('profile-member-id'),
-                memberStatusBadge: utils.$('member-status-badge'),
-                fanPointsDisplay: utils.$('fan-points-display'),
-                fanPointsBar: utils.$('fan-points-bar'),
-                xpDisplay: utils.$('xp-display'),
-                xpBar: utils.$('xp-bar'),
-                cardMemberId: utils.$('card-member-id'),
-                cardStatus: utils.$('card-status'),
-                cardStatusText: utils.$('card-status-text'),
-                downloadPngOption: utils.$('download-png-option'),
-                downloadPdfOption: utils.$('download-pdf-option'),
-                downloadDetailsOption: utils.$('download-details-option')
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE MANAGEMENT ---
+            const appState = {
+                currentStep: 1,
+                totalSteps: 4,
+                script: '',
+                selectedAnchor: null,
+                mediaFiles: [],
+                generationInterval: null,
+                brollInterval: null
             };
-            
-            if (appState.isAuthorized) {
-                // Hide warning banner with animation
-                if (elements.authWarningBanner) {
-                    elements.authWarningBanner.style.opacity = '0';
-                    elements.authWarningBanner.style.transform = 'translateY(-20px)';
-                    setTimeout(() => {
-                        elements.authWarningBanner.style.display = 'none';
-                    }, 300);
-                }
-                
-                // Update status indicators
-                if (elements.authStatus) {
-                    elements.authStatus.innerHTML = '🟢 Active and Verified';
-                    elements.authStatus.className = 'text-green-500 font-bold flex items-center text-xs';
-                }
-                if (elements.profileMemberId) elements.profileMemberId.textContent = appState.membershipId;
-                if (elements.memberStatusBadge) {
-                    elements.memberStatusBadge.textContent = 'VERIFIED MEMBER';
-                    elements.memberStatusBadge.className = 'bg-green-100/80 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-xs font-bold mb-4 backdrop-blur-sm';
-                }
-                
-                // Update stats with animation
-                if (elements.fanPointsDisplay) {
-                    animateNumberChange(elements.fanPointsDisplay, parseInt(elements.fanPointsDisplay.textContent), appState.fanPoints);
-                }
-                if (elements.fanPointsBar) {
-                    elements.fanPointsBar.style.width = Math.min((appState.fanPoints / 1000) * 100, 100) + '%';
-                }
-                if (elements.xpDisplay) {
-                    animateNumberChange(elements.xpDisplay, parseInt(elements.xpDisplay.textContent), appState.xp);
-                }
-                if (elements.xpBar) {
-                    elements.xpBar.style.width = Math.min((appState.xp / 1000) * 100, 100) + '%';
-                }
-                
-                // Update card
-                if (elements.cardMemberId) elements.cardMemberId.textContent = appState.membershipId;
-                if (elements.cardStatus) {
-                    elements.cardStatus.textContent = 'Active';
-                    elements.cardStatus.className = 'card-status-active';
-                }
-                if (elements.cardStatusText) {
-                    elements.cardStatusText.textContent = 'Your account is fully activated! You can now download your ID card and access all benefits.';
-                    elements.cardStatusText.className = 'font-bold text-green-500';
-                }
-                
-                // Enable download options
-                [elements.downloadPngOption, elements.downloadPdfOption, elements.downloadDetailsOption].forEach(option => {
-                    if (option) {
-                        option.classList.remove('disabled');
-                        option.classList.remove('error');
-                        option.classList.remove('success');
-                    }
-                });
-                
-                // Enable benefits with staggered animation
-                const benefitCards = document.querySelectorAll('.benefit-card');
-                benefitCards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.style.transition = 'all 0.5s ease';
-                        card.classList.remove('opacity-60');
-                        const lockIndicator = card.querySelector('.bg-red-100');
-                        if (lockIndicator) lockIndicator.style.display = 'none';
-                        const button = card.querySelector('.benefit-btn');
-                        if (button) {
-                            button.disabled = false;
-                            button.textContent = 'Request Access';
-                            button.className = button.className.replace('bg-gray-400 cursor-not-allowed', 'btn-primary');
-                        }
-                    }, index * 100);
-                });
-                
-            } else {
-                // Show warning banner
-                if (elements.authWarningBanner) {
-                    elements.authWarningBanner.style.display = 'block';
-                    elements.authWarningBanner.style.opacity = '1';
-                    elements.authWarningBanner.style.transform = 'translateY(0)';
-                }
-                
-                // Keep non-activated status
-                if (elements.authStatus) {
-                    elements.authStatus.innerHTML = '🔴 Not Activated';
-                    elements.authStatus.className = 'text-red-500 font-bold flex items-center text-xs';
-                }
-                if (elements.profileMemberId) elements.profileMemberId.textContent = 'KR-XXXXXX';
-                if (elements.memberStatusBadge) {
-                    elements.memberStatusBadge.textContent = 'NEW MEMBER';
-                    elements.memberStatusBadge.className = 'bg-yellow-100/80 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full text-xs font-bold mb-4 backdrop-blur-sm';
-                }
-                
-                // Keep initial stats
-                if (elements.fanPointsDisplay) elements.fanPointsDisplay.textContent = '100';
-                if (elements.fanPointsBar) elements.fanPointsBar.style.width = '10%';
-                if (elements.xpDisplay) elements.xpDisplay.textContent = '100';
-                if (elements.xpBar) elements.xpBar.style.width = '10%';
-                
-                // Keep pending card status
-                if (elements.cardMemberId) elements.cardMemberId.textContent = 'KR-XXXXXX';
-                if (elements.cardStatus) {
-                    elements.cardStatus.textContent = 'Pending';
-                    elements.cardStatus.className = 'card-status-pending';
-                }
-                if (elements.cardStatusText) {
-                    elements.cardStatusText.textContent = 'Activation required for full access and download functionality.';
-                    elements.cardStatusText.className = 'font-bold text-red-500';
-                }
-                
-                // Disable download options
-                [elements.downloadPngOption, elements.downloadPdfOption, elements.downloadDetailsOption].forEach(option => {
-                    if (option) {
-                        option.classList.add('disabled');
-                        option.classList.remove('error');
-                        option.classList.remove('success');
-                        option.classList.remove('loading');
-                    }
-                });
-                
-                // Keep benefits locked
-                const benefitCards = document.querySelectorAll('.benefit-card');
-                benefitCards.forEach(card => {
-                    card.classList.add('opacity-60');
-                    const lockIndicator = card.querySelector('.bg-red-100');
-                    if (lockIndicator) lockIndicator.style.display = 'block';
-                    const button = card.querySelector('.benefit-btn');
-                    if (button) {
-                        button.disabled = true;
-                        button.textContent = 'Locked';
-                        button.className = button.className.replace('btn-primary', 'bg-gray-400 cursor-not-allowed');
-                    }
-                });
-            }
-        }
 
-        // Animate number changes with improved easing
-        function animateNumberChange(element, startValue, endValue, duration = 1500) {
-            if (!element) return;
-            
-            const startTime = performance.now();
-            
-            function updateNumber(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-                const currentValue = Math.round(startValue + (endValue - startValue) * easeOutQuart);
-                
-                element.textContent = currentValue;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(updateNumber);
-                }
-            }
-            
-            requestAnimationFrame(updateNumber);
-        }
+            // --- DOM ELEMENTS ---
+            const dom = {
+                steps: document.querySelectorAll('.workflow-step'),
+                nextBtn: document.getElementById('next-btn'),
+                backBtn: document.getElementById('back-btn'),
+                newsScript: document.getElementById('news-script'),
+                anchorGrid: document.querySelector('.anchor-grid'),
+                mediaUploadInput: document.getElementById('media-upload-input'),
+                mediaPreview: document.getElementById('media-preview'),
+                finalVideoContainer: document.getElementById('final-video-container'),
+                loadingContainer: document.getElementById('loading-container'),
+                loadingText: document.getElementById('loading-text')
+            };
 
-        // Enhanced cross-browser download functionality
-        function downloadMembershipCard() {
-            if (!appState.isAuthorized) {
-                voiceAssistant.speak("Please activate your account first to download your ID card.");
-                showNotification('Account activation required', 'warning');
-                return;
-            }
-            
-            const cardElement = utils.$('membership-card');
-            const downloadOption = utils.$('download-png-option');
-            
-            if (!cardElement) {
-                showNotification('Membership card not found', 'error');
-                return;
-            }
-
-            // Add loading state
-            if (downloadOption) {
-                downloadOption.classList.add('loading');
-                downloadOption.classList.remove('error', 'success');
-            }
-            
-            voiceAssistant.speak("Generating your ID card!");
-
-            const downloadApproaches = [
-                () => downloadWithHTML2Canvas(cardElement),
-                () => downloadWithCanvasAPI(cardElement),
-                () => downloadWithSVGConversion(cardElement)
+            // --- DATA ---
+            const ANCHORS = [
+                { id: 'ava', name: 'Ava', src: 'https://i.pravatar.cc/150?u=ava' },
+                { id: 'david', name: 'David', src: 'https://i.pravatar.cc/150?u=david' },
+                { id: 'priya', name: 'Priya', src: 'https://i.pravatar.cc/150?u=priya' },
+                { id: 'kenji', name: 'Kenji', src: 'https://i.pravatar.cc/150?u=kenji' },
+                { id: 'sofia', name: 'Sofia', src: 'https://i.pravatar.cc/150?u=sofia' },
+                { id: 'marcus', name: 'Marcus', src: 'https://i.pravatar.cc/150?u=marcus' },
             ];
 
-            function tryNextApproach(index = 0) {
-                if (index >= downloadApproaches.length) {
-                    if (downloadOption) downloadOption.classList.add('error');
-                    showNotification('Download failed: All methods exhausted.', 'error');
-                    return;
-                }
-
-                try {
-                    downloadApproaches[index]().then(success => {
-                        if (success) {
-                            if (downloadOption) {
-                                downloadOption.classList.remove('loading');
-                                downloadOption.classList.add('success');
-                            }
-                            voiceAssistant.speak("ID card downloaded successfully!");
-                            showNotification('ID Card downloaded successfully!', 'success');
-                        } else {
-                            tryNextApproach(index + 1);
-                        }
-                    }).catch(() => {
-                        tryNextApproach(index + 1);
-                    });
-                } catch (e) {
-                    tryNextApproach(index + 1);
-                }
+            // --- INITIALIZATION ---
+            function init() {
+                populateAnchors();
+                setupEventListeners();
+                updateUI();
             }
 
-            tryNextApproach();
-        }
-
-        // Primary download method using html2canvas
-        function downloadWithHTML2Canvas(cardElement) {
-            return new Promise((resolve, reject) => {
-                if (!window.html2canvas) {
-                    reject(new Error('html2canvas not available'));
-                    return;
-                }
-
-                html2canvas(cardElement, {
-                    backgroundColor: '#ffffff',
-                    scale: 3,
-                    logging: false,
-                    useCORS: true,
-                    allowTaint: false,
-                    width: cardElement.offsetWidth,
-                    height: cardElement.offsetHeight,
-                    onclone: (clonedDoc) => {
-                        const clonedCard = clonedDoc.getElementById('membership-card');
-                        if (clonedCard) {
-                            clonedCard.style.transform = 'none';
-                            clonedCard.style.transition = 'none';
-                        }
-                    }
-                }).then(canvas => {
-                    if (!canvas || canvas.width === 0 || canvas.height === 0) {
-                        reject(new Error('Invalid canvas'));
-                        return;
-                    }
-
-                    if (canvas.toBlob) {
-                        canvas.toBlob(function(blob) {
-                            if (blob) {
-                                downloadBlob(blob, 'Lions_Gate_Membership_Card_Kimberly_Rokeness.png');
-                                resolve(true);
-                            } else {
-                                reject(new Error('Failed to create blob'));
-                            }
-                        }, 'image/png', 1.0);
-                    } else {
-                        const dataURL = canvas.toDataURL('image/png');
-                        downloadDataURL(dataURL, 'Lions_Gate_Membership_Card_Kimberly_Rokeness.png');
-                        resolve(true);
-                    }
-                }).catch(reject);
-            });
-        }
-
-        // Fallback method using native Canvas API
-        function downloadWithCanvasAPI(cardElement) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    canvas.width = cardElement.offsetWidth * 2;
-                    canvas.height = cardElement.offsetHeight * 2;
-                    
-                    // Create a simple representation
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Add text content
-                    ctx.fillStyle = '#d4291c';
-                    ctx.font = 'bold 24px Inter, sans-serif';
-                    ctx.fillText('LIONS GATE', 20, 40);
-                    
-                    ctx.fillStyle = '#000000';
-                    ctx.font = '20px Inter, sans-serif';
-                    ctx.fillText('Kimberly Rokeness', 20, 80);
-                    
-                    ctx.font = '14px Inter, sans-serif';
-                    ctx.fillText(appState.membershipId, 20, 100);
-                    ctx.fillText('Hollywood Elite Member', 20, 120);
-                    
-                    const dataURL = canvas.toDataURL('image/png');
-                    downloadDataURL(dataURL, 'Lions_Gate_Membership_Card_Kimberly_Rokeness.png');
-                    resolve(true);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        }
-
-        // SVG conversion fallback
-        function downloadWithSVGConversion(cardElement) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const svgData = `
-                        <svg width="400" height="250" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#ffffff" stroke="#e3e3e3" stroke-width="2"/>
-                            <rect x="0" y="0" width="100%" height="4" fill="#d4291c"/>
-                            <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#d4291c">LIONS GATE</text>
-                            <text x="300" y="30" font-family="Arial, sans-serif" font-size="10" fill="#666">MEMBER ID</text>
-                            <text x="20" y="80" font-family="Arial, sans-serif" font-size="16" font-weight="bold">${appState.membershipData.fullName}</text>
-                            <text x="20" y="100" font-family="Arial, sans-serif" font-size="12" fill="#666">${appState.membershipId}</text>
-                            <text x="20" y="120" font-family="Arial, sans-serif" font-size="12" fill="#666">Hollywood Elite Member</text>
-                            <text x="20" y="160" font-family="Arial, sans-serif" font-size="10" fill="#666">Status: ${appState.isAuthorized ? 'Active' : 'Pending'}</text>
-                            <text x="20" y="180" font-family="Arial, sans-serif" font-size="10" fill="#666">Valid Until: Dec 2025</text>
-                            <text x="20" y="230" font-family="Arial, sans-serif" font-size="8" fill="#999">Lions Gate Family Bureau</text>
-                        </svg>
+            function populateAnchors() {
+                dom.anchorGrid.innerHTML = '';
+                ANCHORS.forEach(anchor => {
+                    const avatarDiv = document.createElement('div');
+                    avatarDiv.className = 'anchor-avatar';
+                    avatarDiv.dataset.id = anchor.id;
+                    avatarDiv.innerHTML = `
+                        <img src="${anchor.src}" alt="${anchor.name}">
+                        <div class="checkmark">✔</div>
+                        <p>${anchor.name}</p>
                     `;
+                    dom.anchorGrid.appendChild(avatarDiv);
+                });
+            }
 
-                    const blob = new Blob([svgData], { type: 'image/svg+xml' });
-                    downloadBlob(blob, 'Lions_Gate_Membership_Card_Kimberly_Rokeness.svg');
-                    resolve(true);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        }
-
-        // Enhanced blob download with multiple fallbacks
-        function downloadBlob(blob, filename) {
-            try {
-                // Method 1: Modern browsers
-                if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-                    window.navigator.msSaveOrOpenBlob(blob, filename);
-                    return;
-                }
-
-                // Method 2: Standard approach
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
+            function setupEventListeners() {
+                dom.nextBtn.addEventListener('click', handleNext);
+                dom.backBtn.addEventListener('click', handleBack);
                 
-                link.download = filename;
-                link.href = url;
-                link.style.display = 'none';
-                
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                
-            } catch (error) {
-                console.error('Blob download failed:', error);
-                throw error;
-            }
-        }
-
-        // Enhanced data URL download
-        function downloadDataURL(dataURL, filename) {
-            try {
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = dataURL;
-                link.style.display = 'none';
-                
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-            } catch (error) {
-                console.error('Data URL download failed:', error);
-                throw error;
-            }
-        }
-
-        // Enhanced PDF generation with fallbacks
-        function generateMembershipCardPDF() {
-            if (!appState.isAuthorized) {
-                voiceAssistant.speak("Please activate your account first to download your ID card.");
-                showNotification('Account activation required', 'warning');
-                return;
-            }
-
-            const downloadOption = utils.$('download-pdf-option');
-            
-            if (downloadOption) {
-                downloadOption.classList.add('loading');
-                downloadOption.classList.remove('error', 'success');
-            }
-
-            const pdfMethods = [
-                () => generatePDFWithJSPDF()
-            ];
-
-            function tryNextPDFMethod(index = 0) {
-                if (index >= pdfMethods.length) {
-                    if (downloadOption) downloadOption.classList.add('error');
-                    showNotification('PDF generation failed', 'error');
-                    return;
-                }
-
-                try {
-                    pdfMethods[index]().then(success => {
-                        if (success) {
-                            if (downloadOption) {
-                                downloadOption.classList.remove('loading');
-                                downloadOption.classList.add('success');
-                            }
-                            voiceAssistant.speak("ID card PDF downloaded successfully!");
-                            showNotification('ID Card PDF downloaded successfully!', 'success');
-                        } else {
-                            tryNextPDFMethod(index + 1);
-                        }
-                    }).catch(() => {
-                        tryNextPDFMethod(index + 1);
-                    });
-                } catch (e) {
-                    tryNextPDFMethod(index + 1);
-                }
-            }
-
-            tryNextPDFMethod();
-        }
-
-        // Primary PDF method
-        function generatePDFWithJSPDF() {
-            return new Promise((resolve, reject) => {
-                if (!window.jsPDF) {
-                    reject(new Error('jsPDF not available'));
-                    return;
-                }
-
-                try {
-                    const { jsPDF } = window.jsPDF;
-                    const doc = new jsPDF({
-                        orientation: 'landscape',
-                        unit: 'mm',
-                        format: [85.6, 53.98]
-                    });
-
-                    // Background
-                    doc.setFillColor(212, 41, 28);
-                    doc.rect(0, 0, 85.6, 4, 'F');
-                    doc.setFillColor(255, 193, 7);
-                    doc.rect(0, 4, 85.6, 2, 'F');
-
-                    // Content
-                    doc.setFontSize(14);
-                    doc.setTextColor(212, 41, 28);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('LIONS GATE', 8, 12);
-
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('MEMBER ID', 65, 12);
-
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('Kimberly Rokeness', 8, 22);
-
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(appState.membershipId, 8, 27);
-                    doc.text('Hollywood Elite Member', 8, 31);
-
-                    doc.setFontSize(7);
-                    doc.text('Status:', 8, 38);
-                    doc.setTextColor(16, 185, 129);
-                    doc.text('Active', 20, 38);
-
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Valid Until:', 8, 42);
-                    doc.setTextColor(0, 0, 0);
-                    doc.text('Dec 2025', 25, 42);
-
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Issue Date:', 8, 46);
-                    doc.setTextColor(0, 0, 0);
-                    doc.text('Jun 23, 2025', 25, 46);
-
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Level:', 45, 42);
-                    doc.setTextColor(0, 0, 0);
-                    doc.text('Elite', 55, 42);
-
-                    doc.setFontSize(6);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('Lions Gate Family Bureau', 8, 52);
-                    doc.text('|||||| ||| ||||', 60, 52);
-
-                    doc.save('Lions_Gate_Membership_Card_Kimberly_Rokeness.pdf');
-                    resolve(true);
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        }
-
-        // Enhanced membership details PDF
-        function generateMembershipDetailsPDF() {
-            const downloadOption = utils.$('download-details-option');
-            
-            if (downloadOption) {
-                downloadOption.classList.add('loading');
-                downloadOption.classList.remove('error', 'success');
-            }
-
-            const detailsMethods = [
-                () => generateDetailsWithJSPDF()
-            ];
-
-            function tryNextDetailsMethod(index = 0) {
-                if (index >= detailsMethods.length) {
-                    if (downloadOption) downloadOption.classList.add('error');
-                    showNotification('Details generation failed', 'error');
-                    return;
-                }
-
-                try {
-                    detailsMethods[index]().then(success => {
-                        if (success) {
-                            if (downloadOption) {
-                                downloadOption.classList.remove('loading');
-                                downloadOption.classList.add('success');
-                            }
-                            voiceAssistant.speak("Membership details downloaded successfully!");
-                            showNotification('Membership details downloaded successfully!', 'success');
-                        } else {
-                            tryNextDetailsMethod(index + 1);
-                        }
-                    }).catch(() => {
-                        tryNextDetailsMethod(index + 1);
-                    });
-                } catch (e) {
-                    tryNextDetailsMethod(index + 1);
-                }
-            }
-
-            tryNextDetailsMethod();
-        }
-
-        function generateDetailsWithJSPDF() {
-            return new Promise((resolve, reject) => {
-                if (!window.jsPDF) {
-                    reject(new Error('jsPDF not available'));
-                    return;
-                }
-
-                try {
-                    const { jsPDF } = window.jsPDF;
-                    const doc = new jsPDF();
-
-                    // Header
-                    doc.setFillColor(212, 41, 28);
-                    doc.rect(0, 0, 210, 25, 'F');
-
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(20);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('LIONS GATE FAMILY BUREAU', 20, 15);
-
-                    doc.setFontSize(12);
-                    doc.text('Official Membership Documentation', 20, 21);
-
-                    // Member Information
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(16);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('MEMBER INFORMATION', 20, 40);
-
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-                    
-                    const memberInfo = [
-                        ['Full Name:', appState.membershipData.fullName],
-                        ['Member ID:', appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX'],
-                        ['Email:', appState.membershipData.email],
-                        ['Phone:', appState.membershipData.phone],
-                        ['Address:', appState.membershipData.address],
-                        ['Emergency Contact:', appState.membershipData.emergencyContact]
-                    ];
-
-                    let yPosition = 50;
-                    memberInfo.forEach(([label, value]) => {
-                        doc.setFont(undefined, 'bold');
-                        doc.text(label, 20, yPosition);
-                        doc.setFont(undefined, 'normal');
-                        doc.text(value, 55, yPosition);
-                        yPosition += 8;
-                    });
-
-                    // Membership Details
-                    yPosition += 10;
-                    doc.setFontSize(16);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('MEMBERSHIP DETAILS', 20, yPosition);
-
-                    yPosition += 10;
-                    const membershipDetails = [
-                        ['Membership Type:', appState.membershipData.membershipType],
-                        ['Join Date:', appState.membershipData.joinDate],
-                        ['Expiry Date:', appState.membershipData.expiryDate],
-                        ['Status:', appState.isAuthorized ? 'Active & Verified' : 'Pending Activation'],
-                        ['Fan Points:', appState.fanPoints.toString()],
-                        ['Experience Points:', appState.xp.toString()],
-                        ['Member Level:', appState.isAuthorized ? 'Verified Elite' : 'Newcomer']
-                    ];
-
-                    membershipDetails.forEach(([label, value]) => {
-                        doc.setFont(undefined, 'bold');
-                        doc.text(label, 20, yPosition);
-                        doc.setFont(undefined, 'normal');
-                        doc.text(value, 60, yPosition);
-                        yPosition += 8;
-                    });
-
-                    // Benefits
-                    yPosition += 10;
-                    doc.setFontSize(16);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('MEMBERSHIP BENEFITS', 20, yPosition);
-
-                    yPosition += 10;
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-
-                    appState.membershipData.benefits.forEach((benefit) => {
-                        doc.text(`• ${benefit}`, 25, yPosition);
-                        yPosition += 6;
-                    });
-
-                    // Contact Information
-                    yPosition += 15;
-                    doc.setFillColor(240, 240, 240);
-                    doc.rect(15, yPosition - 5, 180, 25, 'F');
-
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('CONTACT INFORMATION', 20, yPosition + 5);
-
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-                    doc.text('Support Email: erwinstoff0766@gmail.com', 20, yPosition + 12);
-                    doc.text('Website: www.lionsgatefamilybureau.com', 20, yPosition + 18);
-
-                    // Footer
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('© 2024 Lions Gate Family Bureau. All rights reserved.', 20, 280);
-                    doc.text(`Generated on: ${new Date().toLocaleString()}`, 120, 280);
-
-                    doc.save('Lions_Gate_Membership_Details_Kimberly_Rokeness.pdf');
-                    resolve(true);
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        }
-
-        // Enhanced notification system
-        function showNotification(message, type = 'info', duration = 4000) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-[9999] px-4 py-3 rounded-xl shadow-lg backdrop-blur-lg transition-all duration-300 transform translate-x-full max-w-sm ${
-                type === 'success' ? 'bg-green-500/90 text-white' :
-                type === 'error' ? 'bg-red-500/90 text-white' :
-                type === 'warning' ? 'bg-yellow-500/90 text-white' :
-                'bg-blue-500/90 text-white'
-            }`;
-            
-            notification.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <span class="text-sm">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200 touch-target">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            requestAnimationFrame(() => {
-                notification.style.transform = 'translateX(0)';
-            });
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
+                dom.anchorGrid.addEventListener('click', e => {
+                    const avatar = e.target.closest('.anchor-avatar');
+                    if (avatar) {
+                        appState.selectedAnchor = ANCHORS.find(a => a.id === avatar.dataset.id);
+                        document.querySelectorAll('.anchor-avatar').forEach(a => a.classList.remove('selected'));
+                        avatar.classList.add('selected');
                     }
-                }, 300);
-            }, duration);
-        }
-
-        // Enhanced modal management with scroll locking
-        function showModal(modal) {
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                document.documentElement.style.overflow = 'hidden';
+                });
+                
+                dom.mediaUploadInput.addEventListener('change', handleMediaUpload);
             }
-        }
 
-        function hideModal(modal) {
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-            }
-        }
+            // --- UI & WORKFLOW LOGIC ---
+            function updateUI() {
+                // Step visibility
+                dom.steps.forEach(step => step.classList.remove('active'));
+                document.getElementById(`step-${appState.currentStep}`).classList.add('active');
 
-        // Enhanced contact support
-        function contactSupport(subject = '', body = '') {
-            const email = 'erwinstoff0766@gmail.com';
-            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            try {
-                window.open(mailtoLink);
-            } catch (e) {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(email).then(() => {
-                        showNotification('Email copied to clipboard: ' + email, 'info');
-                    }).catch(() => {
-                        showNotification('Contact: ' + email, 'info');
-                    });
+                // Button visibility and text
+                dom.backBtn.style.display = appState.currentStep > 1 ? 'inline-block' : 'none';
+                dom.nextBtn.style.display = appState.currentStep === appState.totalSteps ? 'none' : 'inline-block';
+                dom.nextBtn.textContent = appState.currentStep === appState.totalSteps - 1 ? 'Generate Video' : 'Next';
+
+                if (appState.currentStep === appState.totalSteps) {
+                    dom.backBtn.textContent = 'Start Over';
                 } else {
-                    showNotification('Contact: ' + email, 'info');
+                    dom.backBtn.textContent = 'Back';
                 }
             }
-        }
 
-        // Enhanced loading screen management
-        function hideLoadingScreen() {
-            const loadingScreen = utils.$('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    appState.isLoading = false;
-                }, 500);
+            function handleNext() {
+                if (!validateStep()) return;
+                appState.currentStep++;
+                if (appState.currentStep === appState.totalSteps) {
+                    runGeneration();
+                }
+                updateUI();
             }
-        }
 
-        // Enhanced event listeners initialization
-        function initEventListeners() {
-            try {
-                const elements = {
-                    enterPortalBtn: utils.$('enter-portal-btn'),
-                    acceptInvitationBtn: utils.$('accept-invitation-btn'),
-                    declineInvitationBtn: utils.$('decline-invitation-btn'),
-                    authModal: utils.$('auth-modal'),
-                    closeAuthBtn: utils.$('close-auth-btn'),
-                    authCodeInput: utils.$('auth-code-input'),
-                    verifyCodeBtn: utils.$('verify-code-btn'),
-                    proceedWithoutAuthBtn: utils.$('proceed-without-auth-btn'),
-                    contactSupportModalBtn: utils.$('contact-support-modal-btn'),
-                    declineModal: utils.$('decline-modal'),
-                    closeDeclineBtn: utils.$('close-decline-btn'),
-                    confirmDeclineBtn: utils.$('confirm-decline-btn'),
-                    cancelDeclineBtn: utils.$('cancel-decline-btn'),
-                    landingPage: utils.$('landing-page'),
-                    invitationPage: utils.$('invitation-page'),
-                    mainDashboard: utils.$('main-dashboard'),
-                    declinedPage: utils.$('declined-page')
-                };
-
-                // Landing page
-                if (elements.enterPortalBtn) {
-                    utils.on(elements.enterPortalBtn, 'click', () => {
-                        voiceAssistant.speak("Welcome to Lions Gate Family Bureau!");
-                        
-                        if (elements.landingPage) {
-                            elements.landingPage.style.opacity = '0';
-                            elements.landingPage.style.pointerEvents = 'none';
-                            
-                            setTimeout(() => {
-                                elements.landingPage.style.display = 'none';
-                                if (elements.invitationPage) {
-                                    elements.invitationPage.classList.remove('hidden');
-                                }
-                            }, 500);
-                        }
-                    });
+            function handleBack() {
+                if (appState.currentStep === appState.totalSteps) {
+                    resetApp();
+                    return;
                 }
+                appState.currentStep--;
+                updateUI();
+            }
 
-                // Invitation page
-                if (elements.acceptInvitationBtn) {
-                    utils.on(elements.acceptInvitationBtn, 'click', () => {
-                        voiceAssistant.speak("Great choice! Please enter your authorization code.");
-                        showModal(elements.authModal);
-                    });
-                }
-
-                if (elements.declineInvitationBtn) {
-                    utils.on(elements.declineInvitationBtn, 'click', () => {
-                        showModal(elements.declineModal);
-                    });
-                }
-
-                // Authorization modal
-                if (elements.closeAuthBtn) {
-                    utils.on(elements.closeAuthBtn, 'click', () => hideModal(elements.authModal));
-                }
-
-                if (elements.authModal) {
-                    utils.on(elements.authModal, 'click', (e) => {
-                        if (e.target === elements.authModal) {
-                            hideModal(elements.authModal);
-                        }
-                    });
-                }
-
-                if (elements.verifyCodeBtn) {
-                    utils.on(elements.verifyCodeBtn, 'click', () => {
-                        const code = elements.authCodeInput ? elements.authCodeInput.value.trim() : '';
-                        const errorEl = utils.$('auth-error');
-                        const successEl = utils.$('auth-success');
-                        
-                        if (errorEl) errorEl.classList.add('hidden');
-                        if (successEl) successEl.classList.add('hidden');
-                        
-                        const originalText = elements.verifyCodeBtn.innerHTML;
-                        elements.verifyCodeBtn.innerHTML = '<div class="loading-spinner mr-2"></div>Verifying...';
-                        elements.verifyCodeBtn.disabled = true;
-                        
-                        setTimeout(() => {
-                            if (code === appState.authCode) {
-                                appState.isAuthorized = true;
-                                appState.fanPoints = 500;
-                                appState.xp = 500;
-                                appState.membershipId = 'KR-260319';
-                                
-                                if (successEl) {
-                                    successEl.textContent = 'Authorization successful! Welcome to the family!';
-                                    successEl.classList.remove('hidden');
-                                }
-                                
-                                voiceAssistant.speak("Congratulations! You're now a verified member!");
-                                
-                                setTimeout(() => {
-                                    hideModal(elements.authModal);
-                                    if (elements.invitationPage) elements.invitationPage.style.display = 'none';
-                                    if (elements.mainDashboard) elements.mainDashboard.classList.remove('hidden');
-                                    updateUIForAuthorization();
-                                    initChat();
-                                }, 2000);
-                            } else {
-                                if (errorEl) {
-                                    errorEl.textContent = 'Invalid code. Please contact support to get your authorization code.';
-                                    errorEl.classList.remove('hidden');
-                                }
-                            }
-                            
-                            elements.verifyCodeBtn.innerHTML = originalText;
-                            elements.verifyCodeBtn.disabled = false;
-                        }, 1500);
-                    });
-                }
-
-                if (elements.proceedWithoutAuthBtn) {
-                    utils.on(elements.proceedWithoutAuthBtn, 'click', () => {
-                        hideModal(elements.authModal);
-                        if (elements.invitationPage) elements.invitationPage.style.display = 'none';
-                        if (elements.mainDashboard) elements.mainDashboard.classList.remove('hidden');
-                        updateUIForAuthorization();
-                        initChat();
-                        
-                        setTimeout(() => {
-                            voiceAssistant.speak("You're using limited access. Enter your code to unlock all features.");
-                        }, 1000);
-                    });
-                }
-
-                if (elements.contactSupportModalBtn) {
-                    utils.on(elements.contactSupportModalBtn, 'click', () => {
-                        const maskedId = appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX';
-                        contactSupport(
-                            'Authorization Code Request - Kimberly Rokeness',
-                            `Hello,\n\nI need my authorization code to activate my Lions Gate Family Bureau account.\n\nMember Name: Kimberly Rokeness\nMember ID: ${maskedId}\n\nPlease provide my authorization code.\n\nThank you!`
-                        );
-                    });
-                }
-
-                // Decline modal
-                if (elements.closeDeclineBtn) {
-                    utils.on(elements.closeDeclineBtn, 'click', () => hideModal(elements.declineModal));
-                }
-
-                if (elements.declineModal) {
-                    utils.on(elements.declineModal, 'click', (e) => {
-                        if (e.target === elements.declineModal) {
-                            hideModal(elements.declineModal);
-                        }
-                    });
-                }
-
-                if (elements.cancelDeclineBtn) {
-                    utils.on(elements.cancelDeclineBtn, 'click', () => hideModal(elements.declineModal));
-                }
-
-                if (elements.confirmDeclineBtn) {
-                    utils.on(elements.confirmDeclineBtn, 'click', () => {
-                        hideModal(elements.declineModal);
-                        if (elements.invitationPage) elements.invitationPage.style.display = 'none';
-                        if (elements.declinedPage) elements.declinedPage.classList.remove('hidden');
-                    });
-                }
-
-                // Enhanced download options
-                const downloadPngOption = utils.$('download-png-option');
-                if (downloadPngOption) {
-                    utils.on(downloadPngOption, 'click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (downloadPngOption.classList.contains('loading')) return;
-                        
-                        if (downloadPngOption.classList.contains('disabled')) {
-                            voiceAssistant.speak("Please activate your account first.");
-                            showNotification('Account activation required', 'warning');
-                            return;
-                        }
-                        
-                        downloadMembershipCard();
-                    }, { passive: false });
-                }
-
-                const downloadPdfOption = utils.$('download-pdf-option');
-                if (downloadPdfOption) {
-                    utils.on(downloadPdfOption, 'click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (downloadPdfOption.classList.contains('loading')) return;
-                        
-                        if (downloadPdfOption.classList.contains('disabled')) {
-                            voiceAssistant.speak("Please activate your account first.");
-                            showNotification('Account activation required', 'warning');
-                            return;
-                        }
-                        
-                        generateMembershipCardPDF();
-                    }, { passive: false });
-                }
-
-                const downloadDetailsOption = utils.$('download-details-option');
-                if (downloadDetailsOption) {
-                    utils.on(downloadDetailsOption, 'click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (downloadDetailsOption.classList.contains('loading')) return;
-                        
-                        if (downloadDetailsOption.classList.contains('disabled')) {
-                            voiceAssistant.speak("Please activate your account first.");
-                            showNotification('Account activation required', 'warning');
-                            return;
-                        }
-                        
-                        generateMembershipDetailsPDF();
-                    }, { passive: false });
-                }
-
-                // Authorization buttons
-                const authorizeAccountBtn = utils.$('authorize-account-btn');
-                if (authorizeAccountBtn) {
-                    utils.on(authorizeAccountBtn, 'click', () => {
-                        showModal(elements.authModal);
-                    });
-                }
-
-                const contactSupportBtn = utils.$('contact-support-btn');
-                if (contactSupportBtn) {
-                    utils.on(contactSupportBtn, 'click', () => {
-                        const maskedId = appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX';
-                        contactSupport(
-                            'Authorization Code Request - Kimberly Rokeness',
-                            `Hello,\n\nI need my authorization code to activate my Lions Gate Family Bureau account.\n\nMember Name: Kimberly Rokeness\nMember ID: ${maskedId}\n\nPlease provide my authorization code.\n\nThank you!`
-                        );
-                    });
-                }
-
-                // Enhanced chat functionality
-                const chatInput = utils.$('chat-input');
-                const sendBtn = utils.$('send-message-btn');
+            function resetApp() {
+                clearInterval(appState.generationInterval);
+                clearInterval(appState.brollInterval);
+                appState.currentStep = 1;
+                appState.script = '';
+                appState.selectedAnchor = null;
+                appState.mediaFiles = [];
                 
-                function sendMessage() {
-                    if (!chatInput) return;
-                    
-                    const message = chatInput.value.trim();
-                    if (!message) return;
-                    
-                    addChatMessage({
-                        sender: 'Kimberly Rokeness',
-                        message: message,
-                        time: 'Just now'
-                    }, true);
-                    
-                    chatInput.value = '';
-                    
-                    setTimeout(() => {
-                        const responses = [
-                            "That's awesome, Kimberly! 🎬",
-                            "So excited you're here with us! ✨",
-                            "You're going to love it here! 🌟",
-                            "Welcome to the family! 🎭"
-                        ];
-                        
-                        const randomUser = chatUsers[Math.floor(Math.random() * chatUsers.length)];
-                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                        
-                        addChatMessage({
-                            sender: randomUser.name,
-                            message: randomResponse,
-                            time: 'Just now',
-                            avatar: randomUser.avatar
-                        });
-                    }, 1500);
-                }
-                
-                if (sendBtn) {
-                    utils.on(sendBtn, 'click', sendMessage);
-                }
-                
-                if (chatInput) {
-                    utils.on(chatInput, 'keypress', (e) => {
-                        if (e.key === 'Enter') {
-                            sendMessage();
-                        }
-                    });
-                }
+                dom.newsScript.value = '';
+                dom.mediaPreview.innerHTML = '';
+                document.querySelectorAll('.anchor-avatar').forEach(a => a.classList.remove('selected'));
+                dom.finalVideoContainer.style.display = 'none';
+                dom.loadingContainer.style.display = 'flex';
 
-                // Notifications
-                const notificationsBtn = utils.$('notifications-btn');
-                const notificationsModal = utils.$('notifications-modal');
-                const closeNotificationsBtn = utils.$('close-notifications-btn');
-                const markAllReadBtn = utils.$('mark-all-read-btn');
-                
-                if (notificationsBtn) {
-                    utils.on(notificationsBtn, 'click', () => {
-                        showModal(notificationsModal);
-                    });
-                }
-                
-                if (closeNotificationsBtn) {
-                    utils.on(closeNotificationsBtn, 'click', () => hideModal(notificationsModal));
-                }
-                
-                if (notificationsModal) {
-                    utils.on(notificationsModal, 'click', (e) => {
-                        if (e.target === notificationsModal) {
-                            hideModal(notificationsModal);
-                        }
-                    });
-                }
-                
-                if (markAllReadBtn) {
-                    utils.on(markAllReadBtn, 'click', () => {
-                        const notificationBadge = utils.$('notification-badge');
-                        if (notificationBadge) {
-                            notificationBadge.style.display = 'none';
-                        }
-                        
-                        showNotification('All notifications marked as read', 'success', 2000);
-                        hideModal(notificationsModal);
-                    });
-                }
+                updateUI();
+            }
 
-                // Profile menu
-                const profileMenuBtn = utils.$('profile-menu-btn');
-                const profileModal = utils.$('profile-modal');
-                const closeProfileBtn = utils.$('close-profile-btn');
-                
-                if (profileMenuBtn) {
-                    utils.on(profileMenuBtn, 'click', () => {
-                        showModal(profileModal);
-                        updateProfileModal();
-                    });
+            function validateStep() {
+                if (appState.currentStep === 1) {
+                    appState.script = dom.newsScript.value;
+                    if (appState.script.trim().length < 25) {
+                        alert('Please enter a more detailed script (at least 25 characters).');
+                        return false;
+                    }
                 }
-                
-                if (closeProfileBtn) {
-                    utils.on(closeProfileBtn, 'click', () => hideModal(profileModal));
+                if (appState.currentStep === 2) {
+                    if (!appState.selectedAnchor) {
+                        alert('Please select your AI anchor.');
+                        return false;
+                    }
                 }
-                
-                if (profileModal) {
-                    utils.on(profileModal, 'click', (e) => {
-                        if (e.target === profileModal) {
-                            hideModal(profileModal);
-                        }
-                    });
-                }
-
-                // Profile menu options
-                const profileMenuOptions = [
-                    'edit-profile-btn',
-                    'account-settings-btn',
-                    'help-support-btn'
-                ];
-
-                profileMenuOptions.forEach(btnId => {
-                    const btn = utils.$(btnId);
-                    if (btn) {
-                        utils.on(btn, 'click', () => {
-                            const action = btnId.replace('-btn', '').replace('-', ' ');
-                            const maskedId = appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX';
-                            contactSupport(
-                                `${action} Request - Kimberly Rokeness`,
-                                `Hello,\n\nI need assistance with ${action}.\n\nMember Name: Kimberly Rokeness\nMember ID: ${maskedId}\n\nThank you!`
-                            );
-                            hideModal(profileModal);
-                        });
+                return true;
+            }
+            
+            function handleMediaUpload(e) {
+                dom.mediaPreview.innerHTML = '';
+                appState.mediaFiles = [];
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = event => {
+                            appState.mediaFiles.push(event.target.result);
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.className = 'preview-item';
+                            dom.mediaPreview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
                     }
                 });
-
-                const membershipDetailsBtn = utils.$('membership-details-btn');
-                if (membershipDetailsBtn) {
-                    utils.on(membershipDetailsBtn, 'click', () => {
-                        generateMembershipDetailsPDF();
-                        hideModal(profileModal);
-                    });
-                }
-
-                const logoutBtn = utils.$('logout-btn');
-                if (logoutBtn) {
-                    utils.on(logoutBtn, 'click', () => {
-                        if (confirm('Are you sure you want to logout?')) {
-                            hideModal(profileModal);
-                            
-                            if (elements.mainDashboard) elements.mainDashboard.classList.add('hidden');
-                            if (elements.landingPage) {
-                                elements.landingPage.style.display = 'flex';
-                                elements.landingPage.style.opacity = '1';
-                                elements.landingPage.style.pointerEvents = 'auto';
-                            }
-                            
-                            appState.isAuthorized = false;
-                            appState.fanPoints = 100;
-                            appState.xp = 100;
-                            appState.membershipId = 'KR-******';
-                            
-                            showNotification('Successfully logged out', 'info');
-                        }
-                    });
-                }
-
-                // Dark mode toggle
-                const darkModeToggle = utils.$('dark-mode-toggle');
-                if (darkModeToggle) {
-                    utils.on(darkModeToggle, 'click', () => {
-                        document.documentElement.classList.toggle('dark');
-                        showNotification(
-                            document.documentElement.classList.contains('dark') ? 
-                            'Dark mode enabled' : 'Light mode enabled',
-                            'info',
-                            1500
-                        );
-                    });
-                }
-
-                // Voice indicator toggle
-                const voiceIndicator = utils.$('voice-indicator');
-                if (voiceIndicator) {
-                    utils.on(voiceIndicator, 'click', () => {
-                        voiceAssistant.toggle();
-                        const voiceText = utils.$('voice-text');
-                        if (!voiceAssistant.isEnabled) {
-                            voiceIndicator.style.opacity = '0.5';
-                            if (voiceText) voiceText.textContent = 'Voice disabled';
-                            showNotification('Voice assistant disabled', 'warning', 1500);
-                        } else {
-                            voiceIndicator.style.opacity = '1';
-                            if (voiceText) voiceText.textContent = 'Voice enabled';
-                            showNotification('Voice assistant enabled', 'success', 1500);
-                        }
-                    });
-                }
-
-                // Benefit cards
-                document.querySelectorAll('.benefit-btn').forEach(btn => {
-                    utils.on(btn, 'click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (btn.disabled) {
-                            voiceAssistant.speak("This benefit requires account activation.");
-                            return;
-                        }
-                        
-                        const card = e.target.closest('.benefit-card');
-                        if (!card) return;
-                        
-                        const benefitNameEl = card.querySelector('h3');
-                        const benefitName = benefitNameEl ? benefitNameEl.textContent : 'Benefit';
-                        const maskedId = appState.isAuthorized ? appState.membershipId : 'KR-XXXXXX';
-                        
-                        contactSupport(
-                            `${benefitName} Access Request - Kimberly Rokeness`,
-                            `Hello,\n\nI would like to request access to ${benefitName} as a Lions Gate Family Bureau member.\n\nMember Name: Kimberly Rokeness\nMember ID: ${maskedId}\nRequested Benefit: ${benefitName}\n\nPlease provide available dates and booking information.\n\nThank you!`
-                        );
-                        
-                        voiceAssistant.speak(`Requesting ${benefitName} access.`);
-                    });
-                });
-
-                // Keyboard events
-                utils.on(document, 'keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        const modals = [elements.authModal, elements.declineModal, notificationsModal, profileModal];
-                        modals.forEach(modal => {
-                            if (modal && modal.classList.contains('active')) {
-                                hideModal(modal);
-                            }
-                        });
-                    }
-                });
-
-                // Window resize
-                const debouncedResize = utils.debounce(() => {
-                    setVH();
-                    initFloatingParticles();
-                }, 250);
-                
-                utils.on(window, 'resize', debouncedResize);
-
-            } catch (error) {
-                console.error('Event listener initialization error:', error);
             }
-        }
 
-        // Enhanced app initialization
-        function initApp() {
-            try {
-                initDarkMode();
-                loadState();
-                initVoiceAssistant();
+            // --- "AI" SIMULATION ---
+            function runGeneration() {
+                // Simulate AI loading process
+                const loadingMessages = ["Analyzing script...", "Extracting keywords...", "Selecting B-roll shots...", "Rendering anchor video...", "Finalizing broadcast..."];
+                let msgIndex = 0;
+                dom.loadingText.textContent = loadingMessages[msgIndex];
                 
-                if (!utils.isMobile()) {
-                    initThreeJS();
-                }
-                
-                initFloatingParticles();
-                initEventListeners();
-                updateUIForAuthorization();
-                
-                const countdownInterval = setInterval(() => {
-                    try {
-                        updateCountdown();
-                    } catch (e) {
-                        console.warn('Countdown update error:', e);
-                        clearInterval(countdownInterval);
+                appState.generationInterval = setInterval(() => {
+                    msgIndex++;
+                    if (msgIndex < loadingMessages.length) {
+                        dom.loadingText.textContent = loadingMessages[msgIndex];
+                    } else {
+                        clearInterval(appState.generationInterval);
                     }
                 }, 1000);
-                
-                updateCountdown();
-                
-                setTimeout(() => {
-                    hideLoadingScreen();
-                    
-                    setTimeout(() => {
-                        voiceAssistant.speak("Welcome Kimberly! You have an exclusive invitation from Lions Gate.");
-                    }, 1500);
-                }, 2000);
-                
-            } catch (error) {
-                console.error('App initialization error:', error);
-                hideLoadingScreen();
-                showNotification('App initialization failed. Please refresh the page.', 'error');
+
+                // Simulate video generation after a delay
+                setTimeout(showFinalVideo, loadingMessages.length * 1000);
             }
-        }
 
-        // Enhanced DOM Content Loaded
-        if (document.readyState === 'loading') {
-            utils.on(document, 'DOMContentLoaded', initApp, { passive: true });
-        } else {
-            initApp();
-        }
+            function showFinalVideo() {
+                dom.loadingContainer.style.display = 'none';
+                
+                // Populate the final video screen with user data
+                document.getElementById('final-anchor-img').src = appState.selectedAnchor.src;
+                document.getElementById('anchor-name-display').textContent = appState.selectedAnchor.name;
+                document.getElementById('report-title-display').textContent = generateHeadline(appState.script);
+                document.getElementById('ticker-text-display').textContent = generateTicker(appState.script);
 
-        // Performance monitoring
-        utils.on(window, 'load', () => {
-            if ('performance' in window) {
-                const loadTime = performance.now();
-                if (loadTime > 3000) {
-                    console.warn('Slow page load detected:', loadTime.toFixed(2) + 'ms');
+                // AI B-roll simulation
+                if (appState.mediaFiles.length > 0) {
+                    let brollIndex = 0;
+                    dom.finalVideoContainer.style.backgroundImage = `url('${appState.mediaFiles[brollIndex]}')`;
+                    appState.brollInterval = setInterval(() => {
+                        brollIndex = (brollIndex + 1) % appState.mediaFiles.length;
+                        dom.finalVideoContainer.style.backgroundImage = `url('${appState.mediaFiles[brollIndex]}')`;
+                    }, 4000); // Change B-roll image every 4 seconds
+                } else {
+                    dom.finalVideoContainer.style.backgroundImage = 'url(https://source.unsplash.com/random/800x1200?city,night)';
                 }
+
+                dom.finalVideoContainer.style.display = 'block';
             }
-        }, { passive: true });
 
-        // Error handling
-        utils.on(window, 'error', (e) => {
-            console.error('Application error:', e.error);
-            showNotification('An error occurred. Please refresh the page.', 'error');
-        }, { passive: true });
-
-        utils.on(window, 'unhandledrejection', (e) => {
-            console.error('Unhandled promise rejection:', e.reason);
-            e.preventDefault();
-        }, { passive: true });
-
-        // Prevent context menu on images
-        utils.on(document, 'contextmenu', (e) => {
-            if (e.target.tagName === 'IMG') {
-                e.preventDefault();
+            // AI Text Analysis Simulation
+            function generateHeadline(script) {
+                const words = script.split(' ');
+                return words.slice(0, 7).join(' ') + '...';
             }
+
+            function generateTicker(script) {
+                const words = script.toLowerCase().replace(/[\.,']/g, '').split(' ');
+                const commonWords = new Set(['the', 'a', 'in', 'is', 'it', 'to', 'its', 'and', 'good', 'evening', 'today']);
+                const keywords = [...new Set(words.filter(w => w.length > 4 && !commonWords.has(w)))];
+                if (keywords.length < 3) return "GLOBALX NEWS HEADLINES: STAY UP TO DATE WITH THE LATEST BREAKING NEWS FROM AROUND THE WORLD...";
+                return "HEADLINES: " + keywords.slice(0, 5).join(' ... ').toUpperCase() + " ... MORE AT 11 ... ";
+            }
+
+            // --- START THE APP ---
+            init();
         });
-
-        // Enhanced orientation change handling
-        utils.on(window, 'orientationchange', () => {
-            setTimeout(() => {
-                setVH();
-                window.scrollTo(0, 0);
-                initFloatingParticles();
-            }, 100);
-        }, { passive: true });
-
-        // Enhanced touch event optimization
-        let touchStartY = 0;
-        utils.on(document, 'touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: true });
-
-        utils.on(document, 'touchmove', (e) => {
-            const touchY = e.touches[0].clientY;
-            const touchDiff = touchStartY - touchY;
-            
-            if (document.body.scrollTop === 0 && touchDiff < 0) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Image preloading
-        function preloadImages() {
-            const imageUrls = [
-                'https://pfst.cf2.poecdn.net/base/image/f5f481349b3d9a6a776745ccdd7b47e7ff00d2fca2ba47a96e825cb662c3b74d?w=810&h=1080',
-                'https://images.unsplash.com/photo-1494790108755-2616b612b647?w=100&h=100&fit=crop&crop=face',
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
-            ];
-            
-            imageUrls.forEach(url => {
-                const img = new Image();
-                img.src = url;
-            });
-        }
-
-        preloadImages();
-
-        // Visibility change handling
-        utils.on(document, 'visibilitychange', () => {
-            if (document.hidden) {
-                if (voiceAssistant && voiceAssistant.synth) {
-                    voiceAssistant.synth.cancel();
-                }
-            }
-        }, { passive: true });
-
-        // Memory cleanup on page unload
-        utils.on(window, 'beforeunload', () => {
-            if (autoMessageInterval) {
-                clearInterval(autoMessageInterval);
-            }
-            
-            if (voiceAssistant && voiceAssistant.synth) {
-                voiceAssistant.synth.cancel();
-            }
-        }, { passive: true });
-
     </script>
 </body>
 </html>
